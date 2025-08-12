@@ -7,7 +7,10 @@ export default function Landing() {
       {/* Cabeçalho - agora com container interno para limitar o conteúdo */}
       <header className="w-full border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-          <h1 className="text-2xl font-bold">📘 MeuApp</h1>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="Logo" className="w-10 h-10" />
+            <h1 className="text-2xl font-bold">MeuApp</h1>
+          </div>
           <nav className="space-x-4">
             <nav className="space-x-4">
               <Link to="#sobre" className="text-blue-600 hover:underline">
@@ -34,7 +37,7 @@ export default function Landing() {
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-6 py-10 text-center flex flex-col items-center">
           <h2 className="text-4xl font-bold mb-4">
-            Crie <span className="text-blue-600">ebooks</span> incríveis com
+            Crie <span className="text-blue-600">Apostilas</span> incríveis com
             Inteligência Artificial
           </h2>
           <p className="text-gray-700 mb-6 max-w-2xl">
@@ -42,13 +45,15 @@ export default function Landing() {
             sem precisar de conhecimento técnico.
           </p>
           <button className="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-500 transition">
-            Começar agora
+            <Link to="/register">
+              Começar agora
+            </Link>
           </button>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
             <div className="bg-gray-200 h-64 w-full flex items-center justify-center rounded-lg">
-              <span className="text-gray-500">[Sua imagem ou vídeo aqui]</span>
+              <span className="text-gray-500">[Imagem para chamar a atenção]</span>
             </div>
           </div>
         </div>
@@ -59,7 +64,7 @@ export default function Landing() {
         <section className="bg-blue-50 py-12 w-full">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-gray-600 mb-2">Já somos</p>
-            <p className="text-5xl font-bold text-blue-600 mb-2">586.213</p>
+            <p className="text-5xl font-bold text-blue-600 mb-2">123.456.789</p>
             <p className="text-gray-600">criadores</p>
           </div>
         </section>
@@ -67,20 +72,20 @@ export default function Landing() {
         {/* Seção Hero */}
         <section className="max-w-7xl mx-auto px-6 py-16 text-center">
           <h2 className="text-4xl font-bold mb-6">
-            Seu e-book incrível em <span className="text-blue-600">3,2,1</span>
+            Sua apostila de estudos incríveis em <span className="text-blue-600">3,2,1</span>
           </h2>
 
           {/* Passos */}
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-4xl font-bold text-blue-600 mb-4">1</div>
-              <h3 className="text-xl font-semibold mb-2">Escolha um tipo de conteúdo</h3>
-              <p className="text-gray-600">Instra o título do seu e-book</p>
+              <h3 className="text-xl font-semibold mb-2">Escolha um tipo de conteúdo e questões</h3>
+              <p className="text-gray-600">Insira o assunto da sua apostila</p>
             </div>
 
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-4xl font-bold text-blue-600 mb-4">2</div>
-              <h3 className="text-xl font-semibold mb-2">Prometa nossa IA</h3>
+              <h3 className="text-xl font-semibold mb-2">Confie em nossa IA</h3>
               <p className="text-gray-600">Nossa IA faz o resto</p>
             </div>
 
@@ -97,30 +102,11 @@ export default function Landing() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold mb-4">
-                Você só precisa do título e nada mais
+                Você só precisa saber o nome do conteúdo e nada mais
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Criar seu projeto e-book é muito fácil, instra o título do e-book e a IA faz o resto pra você.
+                Criar sua apostila é muito fácil: insira o conteúdo e a IA faz o resto pra você.
               </p>
-            </div>
-
-            {/* Formulário */}
-            <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-xl font-semibold mb-6 text-center">Gerar o e-book</h3>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Título do Ebook (0/200)</label>
-                <input
-                  type="text"
-                  placeholder="Ex: Como Criar um Negócio Online"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-sm text-gray-500 mt-1">Exemplo: Thomas Redesio & Tambrom Your Body</p>
-              </div>
-
-              <button className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded hover:bg-blue-500 transition">
-                Criar Ebook
-              </button>
             </div>
           </div>
         </section>

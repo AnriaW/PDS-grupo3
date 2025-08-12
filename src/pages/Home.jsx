@@ -1,113 +1,123 @@
-// src/pages/Home.jsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-export default function Home() {
+export default function Landing() {
   return (
-    <div className="bg-black text-white">
-      {/* HEADER */}
-      <header className="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto">
-        <div className="text-2xl font-bold">
-          SeuLogo
+    <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
+      {/* Cabeçalho - agora com container interno para limitar o conteúdo */}
+      <header className="w-full border-b border-gray-300">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="Logo" className="w-10 h-10" />
+            <h1 className="text-2xl font-bold">MeuApp</h1>
+          </div>
+          <nav className="space-x-4">
+            <nav className="space-x-4">
+              <Link to="#sobre" className="text-blue-600 hover:underline">
+                Sobre
+              </Link>
+              <Link to="#recursos" className="text-blue-600 hover:underline">
+                Recursos
+              </Link>
+              <Link to="#contato" className="text-blue-600 hover:underline">
+                Contato
+              </Link>
+              <Link to="/login" className="text-blue-600 hover:underline">
+                Login
+              </Link>
+              <Link to="/register" className="text-blue-600 hover:underline">
+                Registrar
+              </Link>
+            </nav>
+          </nav>
         </div>
-        <nav className="space-x-6">
-          <Link to="/" className="text-[#0000EE] hover:underline">Início</Link>
-          <Link to="/explore" className="text-[#0000EE] hover:underline">Explorar</Link>
-          <Link to="/planos" className="text-[#0000EE] hover:underline">Planos</Link>
-          <Link to="/login" className="text-[#0000EE] hover:underline">Entrar</Link>
-        </nav>
       </header>
 
-      {/* HERO */}
-      <section className="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto px-8 py-16">
-        <div className="max-w-lg">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-            Crie e-books completos com <span className="text-[#0000EE]">Inteligência Artificial</span>
-          </h1>
-          <p className="text-gray-300 mb-6">
-            Transforme suas ideias em livros digitais incríveis com apenas alguns cliques.
+      {/* Hero Section - conteúdo centralizado mas com fundo de largura total */}
+      <main className="flex-1 w-full">
+        <div className="max-w-7xl mx-auto px-6 py-10 text-center flex flex-col items-center">
+          <h2 className="text-4xl font-bold mb-4">
+            Crie <span className="text-blue-600">Apostilas</span> incríveis com
+            Inteligência Artificial
+          </h2>
+          <p className="text-gray-700 mb-6 max-w-2xl">
+            Transforme suas ideias em conteúdo profissional em poucos segundos,
+            sem precisar de conhecimento técnico.
           </p>
-          <button className="bg-[#0000EE] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
-            Experimente Gratuitamente
+          <button className="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-500 transition">
+            <Link to="/register">
+              Começar agora
+            </Link>
           </button>
-        </div>
-        <div className="mt-10 md:mt-0">
-          {/* Aqui você coloca sua imagem/vídeo */}
-          <div className="w-[400px] h-[250px] bg-gray-800 rounded-lg flex items-center justify-center">
-            <span className="text-gray-500">Imagem/Vídeo</span>
-          </div>
-        </div>
-      </section>
 
-      {/* ETAPAS */}
-      <section className="bg-gray-900 py-16">
-        <div className="max-w-7xl mx-auto text-center px-8">
-          <h2 className="text-3xl font-bold mb-10">Seu e-book incrível em 3 passos</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <div className="text-[#0000EE] text-5xl font-bold mb-4">1</div>
-              <p className="text-gray-300">Escolha um tipo de conteúdo</p>
-            </div>
-            <div>
-              <div className="text-[#0000EE] text-5xl font-bold mb-4">2</div>
-              <p className="text-gray-300">Insira o título do seu e-book</p>
-            </div>
-            <div>
-              <div className="text-[#0000EE] text-5xl font-bold mb-4">3</div>
-              <p className="text-gray-300">Pronto! Nossa IA faz o resto</p>
+          {/* Imagem/Vídeo com largura total */}
+          <div className="mt-10 w-full">
+            <div className="bg-gray-200 h-64 w-full flex items-center justify-center rounded-lg">
+              <span className="text-gray-500">[Imagem para chamar a atenção]</span>
             </div>
           </div>
         </div>
-      </section>
+      </main>
 
-      {/* RECURSOS */}
-      <section className="py-16 max-w-7xl mx-auto px-8 space-y-16">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            {/* Imagem */}
-            <div className="w-full h-[250px] bg-gray-800 rounded-lg"></div>
+      <main className="flex-1 w-full">
+        {/* Seção de Estatística */}
+        <section className="bg-blue-50 py-12 w-full">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <p className="text-gray-600 mb-2">Já somos</p>
+            <p className="text-5xl font-bold text-blue-600 mb-2">123.456.789</p>
+            <p className="text-gray-600">criadores</p>
           </div>
-          <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">Você só precisa do título</h3>
-            <p className="text-gray-300 mb-4">Crie seu projeto de forma fácil e rápida, basta informar o título do e-book e a IA faz o resto.</p>
-            <button className="bg-[#0000EE] text-white px-6 py-3 rounded-lg font-semibold">Gerar e-book</button>
+        </section>
+
+        {/* Seção Hero */}
+        <section className="max-w-7xl mx-auto px-6 py-16 text-center">
+          <h2 className="text-4xl font-bold mb-6">
+            Sua apostila de estudos incríveis em <span className="text-blue-600">3,2,1</span>
+          </h2>
+
+          {/* Passos */}
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-4xl font-bold text-blue-600 mb-4">1</div>
+              <h3 className="text-xl font-semibold mb-2">Escolha um tipo de conteúdo e questões</h3>
+              <p className="text-gray-600">Insira o assunto da sua apostila</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-4xl font-bold text-blue-600 mb-4">2</div>
+              <h3 className="text-xl font-semibold mb-2">Confie em nossa IA</h3>
+              <p className="text-gray-600">Nossa IA faz o resto</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-4xl font-bold text-blue-600 mb-4">3</div>
+              <h3 className="text-xl font-semibold mb-2">Transforme qualquer ideia</h3>
+              <p className="text-gray-600">Instantâneamente</p>
+            </div>
           </div>
+        </section>
+
+        {/* Seção de Chamada para Ação */}
+        <section className="bg-gray-50 py-16 w-full">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-4">
+                Você só precisa saber o nome do conteúdo e nada mais
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Criar sua apostila é muito fácil: insira o conteúdo e a IA faz o resto pra você.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+
+      {/* Rodapé */}
+      <footer className="w-full border-t border-gray-300 py-6 text-center text-gray-500">
+        <div className="max-w-7xl mx-auto px-6">
+          © {new Date().getFullYear()} MeuApp — Todos os direitos reservados.
         </div>
-
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="order-2 md:order-1">
-            <h3 className="text-2xl font-bold mb-4 text-white">Escolha a quantidade de capítulos</h3>
-            <p className="text-gray-300 mb-4">Defina o número de capítulos desejados e veja a mágica acontecer.</p>
-            <button className="bg-[#0000EE] text-white px-6 py-3 rounded-lg font-semibold">Gerar e-book</button>
-          </div>
-          <div className="order-1 md:order-2">
-            {/* Imagem */}
-            <div className="w-full h-[250px] bg-gray-800 rounded-lg"></div>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            {/* Imagem */}
-            <div className="w-full h-[250px] bg-gray-800 rounded-lg"></div>
-          </div>
-          <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">Personalize do seu jeito</h3>
-            <p className="text-gray-300 mb-4">Altere imagens, cores e textos para deixar o e-book com a sua cara.</p>
-            <button className="bg-[#0000EE] text-white px-6 py-3 rounded-lg font-semibold">Gerar e-book</button>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="bg-gray-900 py-16 text-center">
-        <h2 className="text-3xl font-bold mb-6">Pronto para criar seu e-book?</h2>
-        <button className="bg-[#0000EE] text-white px-8 py-4 rounded-lg font-semibold text-lg">Começar Agora</button>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="bg-black py-8 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} SeuNome. Todos os direitos reservados.
       </footer>
     </div>
   );

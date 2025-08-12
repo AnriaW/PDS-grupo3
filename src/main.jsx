@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import CreateApostila from './pages/CreateApostila';
+import Home from './pages/Home';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,14 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+  },
+  {
+    path: '/home',
+    element: <Home />,
+  },
+  {
+    path: '/criar-apostila',
+    element: <CreateApostila />,
   },
 ]);
 
