@@ -42,7 +42,9 @@ export default function Landing() {
           </h2>
           <p className="text-gray-700 mb-6 max-w-2xl">
             Transforme suas ideias em auxílio educacional em poucos segundos,
-            em conformidade com a BNCC,
+            em conformidade com a <a
+              href="https://portal.mec.gov.br/conselho-nacional-de-educacao/base-nacional-comum-curricular-bncc">
+              BNCC</a>,
             sem precisar de conhecimento prévio.
           </p>
           <button className="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-500 transition">
