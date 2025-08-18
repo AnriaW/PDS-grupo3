@@ -1,37 +1,13 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+import Navbar from "../assets/Navbar";
+import Footer from "../assets/Footer";
 
 export default function Landing() {
   return (
     <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
       {/* Cabeçalho - agora com container interno para limitar o conteúdo */}
-      <header className="w-full border-b border-gray-300">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Logo" className="w-10 h-10" />
-            <h1 className="text-2xl font-bold">MeuApp</h1>
-          </div>
-          <nav className="space-x-4">
-            <nav className="space-x-4">
-              <Link to="#sobre" className="text-blue-600 hover:underline">
-                Sobre
-              </Link>
-              <Link to="#recursos" className="text-blue-600 hover:underline">
-                Recursos
-              </Link>
-              <Link to="#contato" className="text-blue-600 hover:underline">
-                Contato
-              </Link>
-              <Link to="/login" className="text-blue-600 hover:underline">
-                Login
-              </Link>
-              <Link to="/register" className="text-blue-600 hover:underline">
-                Registrar
-              </Link>
-            </nav>
-          </nav>
-        </div>
-      </header>
+      <Navbar/>
 
       {/* Hero Section - conteúdo centralizado mas com fundo de largura total */}
       <main className="flex-1 w-full">
@@ -117,11 +93,7 @@ export default function Landing() {
 
 
       {/* Rodapé */}
-      <footer className="w-full border-t border-gray-300 py-6 text-center text-gray-500">
-        <div className="max-w-7xl mx-auto px-6">
-          © {new Date().getFullYear()} MeuApp — Todos os direitos reservados.
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }
