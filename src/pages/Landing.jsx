@@ -41,8 +41,9 @@ export default function Landing() {
             Inteligência Artificial
           </h2>
           <p className="text-gray-700 mb-6 max-w-2xl">
-            Transforme suas ideias em conteúdo profissional em poucos segundos,
-            sem precisar de conhecimento técnico.
+            Transforme suas ideias em auxílio educacional em poucos segundos,
+            em conformidade com a BNCC,
+            sem precisar de conhecimento prévio.
           </p>
           <button className="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-500 transition">
             <Link to="/register">
@@ -72,27 +73,27 @@ export default function Landing() {
         {/* Seção Hero */}
         <section className="max-w-7xl mx-auto px-6 py-16 text-center">
           <h2 className="text-4xl font-bold mb-6">
-            Sua apostila de estudos incríveis em <span className="text-blue-600">3,2,1</span>
+            Sua apostila de estudos incríveis em <span className="text-blue-600">3, 2, 1</span>...
           </h2>
 
           {/* Passos */}
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-4xl font-bold text-blue-600 mb-4">1</div>
-              <h3 className="text-xl font-semibold mb-2">Escolha um tipo de conteúdo e questões</h3>
-              <p className="text-gray-600">Insira o assunto da sua apostila</p>
+              <h3 className="text-xl font-semibold mb-2">Escolha um tipo de conteúdo</h3>
+              <p className="text-gray-600">Insira o tópico de estudos da apostila</p>
             </div>
 
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-4xl font-bold text-blue-600 mb-4">2</div>
               <h3 className="text-xl font-semibold mb-2">Confie em nossa IA</h3>
-              <p className="text-gray-600">Nossa IA faz o resto</p>
+              <p className="text-gray-600">Nossa IA gera uma apostila com exercícios</p>
             </div>
 
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
               <div className="text-4xl font-bold text-blue-600 mb-4">3</div>
-              <h3 className="text-xl font-semibold mb-2">Transforme qualquer ideia</h3>
-              <p className="text-gray-600">Instantâneamente</p>
+              <h3 className="text-xl font-semibold mb-2">Eduque-se em qualquer tópico</h3>
+              <p className="text-gray-600">Instantaneamente</p>
             </div>
           </div>
         </section>
@@ -105,7 +106,7 @@ export default function Landing() {
                 Você só precisa saber o nome do conteúdo e nada mais
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Criar sua apostila é muito fácil: insira o conteúdo e a IA faz o resto pra você.
+                Criar sua apostila é muito fácil: insira o conteúdo e a IA faz o resto para você.
               </p>
             </div>
           </div>
