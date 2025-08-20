@@ -1,0 +1,489 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Desvendando os Conjuntos Numéricos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #222222;
+        --card-bg: #f9f9f9;
+        --accent: #0066cc;
+        --font-size: 1rem;
+      }
+      .dark {
+        --bg: #222222;
+        --fg: #eeeeee;
+        --card-bg: #2b2b2b;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: Arial, sans-serif;
+        font-size: var(--font-size);
+        line-height: 1.5;
+      }
+      .capa {
+        width: 100vw;
+        max-width: 100vw;
+        min-width: 100vw;
+        margin: 0;
+        display: block;
+        object-fit: cover;
+        max-height: 220px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.5rem 3rem;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      .controls button {
+        margin: 0 0.25rem;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.9rem;
+      }
+      section {
+        margin-top: 1rem;
+        border-top: 1px solid #ccc;
+        padding-top: 0.5rem;
+      }
+      h2[role="button"] {
+        margin: 0.5rem 0;
+        font-size: 1.25rem;
+        color: var(--accent);
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      h2[role="button"]:hover {
+        color: #004789;
+      }
+      h2[aria-expanded="true"] .toggle-icon::before {
+        content: "▼ ";
+      }
+      h2[aria-expanded="false"] .toggle-icon::before {
+        content: "▶ ";
+      }
+      .content {
+        margin: 0.5rem 0 1rem 0;
+      }
+      .card,
+      .project {
+        background: var(--card-bg);
+        border: 1px solid #ccc;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+      }
+      .ouvir {
+        background: none;
+        box-shadow: none;
+        border: none;
+        margin-left: 0.5rem;
+        font-size: 0.85rem;
+        vertical-align: middle;
+      }
+      .ouvir img {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+      .dark small {
+        color: #cccccc;
+      }
+      h2[aria-expanded="true"] .toggle-icon::before {
+        content: "▼ ";
+      }
+      h2[aria-expanded="false"] .toggle-icon::before {
+        content: "▶ ";
+      }
+      details.spoiler {
+        background: var(--card-bg);
+        border: 1px dashed var(--accent);
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        border-radius: 5px;
+      }
+      details.spoiler summary {
+        cursor: pointer;
+        font-weight: bold;
+        color: var(--accent);
+        list-style: none;
+      }
+      details.spoiler[open] summary {
+        color: var(--fg);
+        margin-bottom: 0.5rem;
+      }
+      small {
+        display: block;
+        color: #555;
+      }
+      small a {
+        color: inherit;
+        text-decoration: underline;
+      }
+      .titulo {
+        display: flex;
+        flex-direction: column;
+      }
+      .dark small {
+        color: #cccccc;
+      }
+    </style>
+  </head>
+
+  <body>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Conjuntos_Num%C3%A9ricos.png" alt="Capa ilustrativa com diagramas de conjuntos numéricos" class="capa" />
+
+    <div class="container">
+      <header>
+        <div class="titulo">
+          <h1>Desvendando os Conjuntos Numéricos</h1>
+          <small>
+            BNCC:
+            <a href="https://basenacionalcomum.mec.gov.br/abase/#ensino-medio-matematica-em13mat101" target="_blank">EM13MAT101</a>,
+            <a href="https://basenacionalcomum.mec.gov.br/abase/#ensino-medio-matematica-em13mat102" target="_blank">EM13MAT102</a> - 1º ano
+          </small>
+        </div>
+        <div class="controls">
+          <button id="toggle-theme">Tema Escuro/Claro</button>
+          <button id="font-increase">A+</button>
+          <button id="font-decrease">A-</button>
+        </div>
+      </header>
+
+      <!-- Título e Contextualização -->
+      <div class="content" id="titulo">
+        Você já percebeu como usamos diferentes tipos de números para contar, medir ou comparar coisas em nosso cotidiano? Desde marcar pontos em um jogo até calcular o tempo de um trajeto, os conjuntos numéricos estão presentes em várias situações da sua vida. Neste capítulo, vamos explorar como esses conjuntos surgem e para que servem, tornando a Matemática mais próxima do seu dia a dia!
+      </div>
+
+      <!-- Desenvolvimento Teórico -->
+      <section>
+        <h2 role="button" tabindex="0" aria-expanded="false">
+          <span class="toggle-icon"></span> Desenvolvimento Teórico
+        </h2>
+        <button class="ouvir" data-section="desenvolvimento-teorico">
+          <img src="https://img.icons8.com/?size=100&id=108676&format=png&color=0066CC" />
+        </button>
+        <div class="content" hidden id="desenvolvimento-teorico">
+          <p>Ao iniciar seus estudos em <bold>conjuntos numéricos</bold>, você vai perceber que a Matemática busca organizar o mundo dos números em grupos com características próprias. Esses grupos facilitam a resolução de problemas e nos ajudam a entender fenômenos ao nosso redor. Por exemplo, para contar o número de pessoas em uma sala, utilizamos um tipo de número; para representar uma dívida ou uma temperatura abaixo de zero, usamos outro tipo.</p><p>O primeiro grupo que conhecemos é o dos <bold>números naturais</bold>, representados por 0, 1, 2, 3, e assim por diante. Estão presentes no nosso cotidiano ao contar objetos, marcar gols em um jogo ou indicar uma posição em uma fila.</p><p>Para lidar com situações em que não há nada, como quando um pote está vazio, é necessário o número zero. Para descrever dívidas, temperaturas negativas ou movimentos de subir e descer em um elevador, surgem os <bold>números inteiros</bold>. Eles incluem os naturais, seus opostos negativos e o zero.</p><p>Às vezes, precisamos dividir objetos ou medir quantidades não inteiras, como metade de uma pizza ou um quarto de hora. Para isso, utilizamos os <bold>números racionais</bold>, que são frações e decimais. Eles são essenciais em atividades do cotidiano, como compartilhar alimentos, calcular troco ou medir ingredientes em uma receita.</p><p>Existem ainda situações em que as frações não conseguem representar certos valores, como a raiz quadrada de 2. Para esses casos, usamos os <bold>números irracionais</bold>, que não podem ser expressos como fração, mas aparecem em medições de comprimentos ou na construção de figuras geométricas.</p><p>Todos esses grupos juntos formam os <bold>números reais</bold>. Os números reais incluem naturais, inteiros, racionais e irracionais. Eles possibilitam que a Matemática seja aplicada em diversas áreas, desde os cálculos do dia a dia até o desenvolvimento de tecnologias presentes no seu cotidiano, como aplicativos de celular ou equipamentos científicos.</p><p>Perceba que os conjuntos numéricos se encaixam como peças de um quebra-cabeça, onde cada peça tem sua importância e contribui para a compreensão do universo dos números. Por isso, o estudo dos conjuntos numéricos está relacionado também à Física, à Economia e até à Biologia, ampliando o entendimento sobre fenômenos naturais, movimentações financeiras e dados de pesquisas científicas.</p><p>Você sabia que, na História, diferentes povos desenvolveram sistemas de numeração distintos? Conhecer os conjuntos numéricos também ajuda a entender como a humanidade evoluiu no pensamento matemático e na resolução de problemas.</p><p>Refletir sobre os conjuntos numéricos é perceber como o conhecimento matemático está presente no dia a dia e em todas as áreas do saber. Ao longo deste capítulo, você será convidado a explorar, comparar e aplicar diferentes conjuntos numéricos, ampliando sua visão sobre a Matemática e suas inúmeras possibilidades.</p>
+        </div>
+      </section>
+
+      <!-- Exercícios Guiados -->
+      <section>
+        <h2 role="button" tabindex="0" aria-expanded="false">
+          <span class="toggle-icon"></span> Exercícios Guiados
+        </h2>
+        <button class="ouvir" data-section="exercicios-guiados">
+          <img src="https://img.icons8.com/?size=100&id=108676&format=png&color=0066CC" />
+        </button>
+        <div class="content" hidden id="exercicios-guiados">
+          <div class="card">
+            <p>Paula anotou os seguintes resultados ao jogar dados: 2, 5, 4, 6, 1, 3, 6, 2. Quais desses resultados pertencem ao conjunto dos números naturais? Explique.</p>
+            <h3>Passos Orientados:</h3>
+            <ul>
+              <li>Passo 1: Lembre-se do que são números naturais.</li>
+              <li>Passo 2: Analise cada número apresentado por Paula.</li>
+              <li>Passo 3: Identifique quais pertencem ao conjunto dos naturais.</li>
+              <li>Passo 4: Explique sua escolha.</li>
+            </ul>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Todos os números apresentados são números naturais, pois naturais são 0, 1, 2, 3, 4, 5, 6, etc.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Num termômetro, de manhã, a temperatura era -2°C. À tarde, subiu para 3°C. Quais conjuntos numéricos podem ser usados para representar essas temperaturas? Justifique.</p>
+            <h3>Passos Orientados:</h3>
+            <ul>
+              <li>Passo 1: Analise os valores das temperaturas (negativos e positivos).</li>
+              <li>Passo 2: Lembre quais conjuntos numéricos incluem números negativos.</li>
+              <li>Passo 3: Relacione com o contexto do problema.</li>
+              <li>Passo 4: Justifique sua resposta.</li>
+            </ul>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Usamos os números inteiros para incluir valores negativos como -2. As temperaturas podem ser representadas no conjunto dos inteiros e também nos reais.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Uma pizza foi dividida igualmente entre quatro pessoas. Que tipo de número expressa a fração que cada um comeu? A qual conjunto numérico pertence esse número?</p>
+            <h3>Passos Orientados:</h3>
+            <ul>
+              <li>Passo 1: Pense em como representar a divisão da pizza.</li>
+              <li>Passo 2: Escreva a parte que cada um recebe (por exemplo, 1/4).</li>
+              <li>Passo 3: Lembre-se dos conjuntos que envolvem frações.</li>
+              <li>Passo 4: Identifique o conjunto ao qual esse número pertence.</li>
+            </ul>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Cada pessoa comeu 1/4 da pizza. O número 1/4 é um número racional porque pode ser expresso como fração.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Luiz calculou a raiz quadrada de 2 em sua calculadora e encontrou 1,4142135... Esse número pode ser escrito como uma fração exata? Explique a que conjunto pertence.</p>
+            <h3>Passos Orientados:</h3>
+            <ul>
+              <li>Passo 1: Observe que a raiz quadrada de 2 tem infinitas casas decimais não repetitivas.</li>
+              <li>Passo 2: Pense se existe uma fração exata para esse número.</li>
+              <li>Passo 3: Lembre-se das características dos números irracionais.</li>
+              <li>Passo 4: Identifique a qual conjunto numérico esse número pertence.</li>
+            </ul>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>A raiz quadrada de 2 não pode ser escrita como fração exata e pertence aos números irracionais.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Durante um jogo, para saber quem começa, um grupo sorteou um número do conjunto dos inteiros. O zero foi sorteado. Zero pode pertencer a outros conjuntos? Justifique.</p>
+            <h3>Passos Orientados:</h3>
+            <ul>
+              <li>Passo 1: Reflita sobre a definição de inteiros e naturais.</li>
+              <li>Passo 2: Verifique se o zero faz parte dos naturais.</li>
+              <li>Passo 3: Pense se o zero também pertence a outros conjuntos numéricos.</li>
+              <li>Passo 4: Justifique sua resposta.</li>
+            </ul>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>O zero pertence aos inteiros e também é considerado número natural em muitos contextos, além de pertencer aos racionais e reais.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Em uma corrida, os tempos dos atletas foram registrados em minutos e segundos, como 9,58 minutos. Esse número pode ser considerado natural? Explique e classifique o número no conjunto correto.</p>
+            <h3>Passos Orientados:</h3>
+            <ul>
+              <li>Passo 1: Observe o valor decimal do tempo.</li>
+              <li>Passo 2: Lembre-se das características dos números naturais.</li>
+              <li>Passo 3: Verifique em que conjunto o número 9,58 pode ser classificado.</li>
+              <li>Passo 4: Explique seu raciocínio.</li>
+            </ul>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>9,58 não é número natural, pois naturais não têm parte decimal. 9,58 é um número racional e também pertence aos reais.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exercícios e Gabarito -->
+      <section>
+        <h2 role="button" tabindex="0" aria-expanded="false">
+          <span class="toggle-icon"></span> Exercícios e Gabarito
+        </h2>
+        <button class="ouvir" data-section="exercicios-gabarito">
+          <img src="https://img.icons8.com/?size=100&id=108676&format=png&color=0066CC" />
+        </button>
+        <div class="content" hidden id="exercicios-gabarito">
+          <div class="card">
+            <p>Em uma planilha de um atleta, foram anotados os seguintes tempos em segundos para suas corridas: 10,2; 9; 7,5; 8. Esses números pertencem a quais conjuntos numéricos?</p>
+            <ol type="A">
+              <li>Alternativa A: Apenas aos números naturais</li>
+              <li>Alternativa B: Apenas aos números inteiros</li>
+              <li>Alternativa C: Aos números racionais e reais</li>
+              <li>Alternativa D: Aos números irracionais e naturais</li>
+            </ol>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Resposta Correta: C</p>
+              <p>A resposta C está correta porque todos os tempos podem ser escritos como fração, então pertencem aos racionais e também aos reais.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Gabriel desceu 7 andares de elevador (−7) e depois subiu 10 andares (+10). Quais conjuntos incluem esses números?</p>
+            <ol type="A">
+              <li>Alternativa A: Somente naturais</li>
+              <li>Alternativa B: Somente inteiros</li>
+              <li>Alternativa C: Inteiros e reais</li>
+              <li>Alternativa D: Racionais e irracionais</li>
+            </ol>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Resposta Correta: C</p>
+              <p>A resposta C está correta porque −7 e +10 fazem parte dos inteiros e todos os inteiros são reais.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Qual das opções abaixo apresenta apenas números irracionais?</p>
+            <ol type="A">
+              <li>Alternativa A: 0; 1/2; -3</li>
+              <li>Alternativa B: √2; π; √5</li>
+              <li>Alternativa C: 2,5; -8; 1/3</li>
+              <li>Alternativa D: 4; 0; 9,81</li>
+            </ol>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Resposta Correta: B</p>
+              <p>A resposta B está correta porque √2, π e √5 não podem ser escritos como fração, possuem infinitas casas decimais não periódicas, sendo, portanto, irracionais.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Explique por que a divisão de uma pizza entre três pessoas (cada parte igual a 1/3) gera um número racional, e indique como identificá-lo entre os conjuntos numéricos.</p>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>A fração 1/3 representa a divisão exata da pizza entre três pessoas. Como pode ser expressa como uma fração (uma razão entre dois inteiros), é um número racional. Números racionais são todos aqueles que podem ser escritos como fração.</p>
+              <p>A explicação direciona o aluno ao conceito de número racional, reforçando que toda fração (com numerador e denominador inteiros, denominador diferente de zero) é racional.</p>
+            </details>
+          </div>
+          <div class="card">
+            <p>Observe a seguinte expressão: -2,3 + √4. Qual é o valor da expressão e a qual(is) conjunto(s) o resultado pertence?</p>
+            <ol type="A">
+              <li>Alternativa A: O resultado é 0,3 e pertence aos naturais</li>
+              <li>Alternativa B: O resultado é −2,3 e pertence aos inteiros</li>
+              <li>Alternativa C: O resultado é 1,7 e pertence aos números racionais e reais</li>
+              <li>Alternativa D: O resultado é −2,3 e pertence apenas aos irracionais</li>
+            </ol>
+            <details class="spoiler">
+              <summary>Mostrar resposta</summary>
+              <p>Resposta Correta: C</p>
+              <p>A resposta C está correta porque √4 = 2, então −2,3 + 2 = −0,3. O valor −0,3 é um número racional e real, pois pode ser escrito como fração (−3/10).</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Proposta de Projeto -->
+      <section>
+        <h2 role="button" tabindex="0" aria-expanded="false">
+          <span class="toggle-icon"></span> Proposta de Projeto
+        </h2>
+        <button class="ouvir" data-section="proposta-projeto">
+          <img src="https://img.icons8.com/?size=100&id=108676&format=png&color=0066CC" />
+        </button>
+        <div class="content" hidden id="proposta-projeto">
+          <div class="project">
+            <h3>Conjuntos Numéricos no Mundo Real: Pesquisa e Solução de Problemas</h3>
+            <p>Projeto didático em que os alunos vão investigar situações do cotidiano em que diferentes conjuntos numéricos aparecem, registrando dados, simulando situações reais e propondo soluções matemáticas em grupo.</p>
+            <h4>Etapas:</h4>
+            <ul>
+              <li>Formação de grupos e levantamento de situações cotidianas em que se usam diferentes tipos de números (naturais, inteiros, racionais, irracionais e reais)</li>
+              <li>Pesquisa e coleta de exemplos reais, como medidas em receitas, temperaturas, jogos, contas financeiras ou dados científicos</li>
+              <li>Organização e análise dos dados coletados, identificando a quais conjuntos numéricos pertencem</li>
+              <li>Discussão em grupo sobre possíveis problemas e como os conjuntos numéricos ajudam a resolver situações práticas</li>
+              <li>Elaboração de uma apresentação com os resultados encontrados e as soluções propostas, podendo ser cartaz, apresentação digital, vídeo ou outro formato criativo</li>
+            </ul>
+            <h4>Produto Final:</h4>
+            <p>Apresentação multimodal que exemplifique e explique como os conjuntos numéricos são utilizados para resolver situações reais do dia a dia</p>
+            <h4>Avaliação:</h4>
+            <p>A avaliação levará em conta a participação de cada aluno, a clareza e pertinência dos exemplos coletados, a organização e a criatividade na apresentação das soluções e a capacidade de trabalho em equipe.</p>
+            <h4>Competências Socioemocionais:</h4>
+            <ul>
+              <li>colaboração</li>
+              <li>pensamento crítico</li>
+              <li>responsabilidade</li>
+              <li>comunicação</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Referências e próximos capítulos -->
+      <section>
+        <h2 role="button" tabindex="0" aria-expanded="false">
+          <span class="toggle-icon"></span> Referências e Próximos Capítulos
+        </h2>
+        <button class="ouvir" data-section="referencias-proximos">
+          <img src="https://img.icons8.com/?size=100&id=108676&format=png&color=0066CC" />
+        </button>
+        <div class="content" hidden id="referencias-proximos">
+          <h2>Referências</h2>
+          <ul>
+            <li>
+              <strong>Fonte base: BNCC – Base Nacional Comum Curricular</strong>
+              <small>(Licença aberta)</small><br>
+              <a href="http://basenacionalcomum.mec.gov.br/">http://basenacionalcomum.mec.gov.br/</a>
+            </li>
+            <li>
+              <strong>Base Nacional Comum Curricular (BNCC) - Matemática Ensino Médio</strong>
+              <span>(Acesso em junho/2024)</span><br>
+              <a href="http://basenacionalcomum.mec.gov.br/">http://basenacionalcomum.mec.gov.br/</a>
+            </li>
+            <li>
+              <strong>BRASIL. Base Nacional Comum Curricular. Ministério da Educação, 2018.</strong>
+              <small>(Acesso em: 2024-06-16)</small><br>
+              <a href="http://basenacionalcomum.mec.gov.br/">http://basenacionalcomum.mec.gov.br/</a>
+            </li>
+            <li>
+              <strong>BRASIL. Base Nacional Comum Curricular. Brasília: MEC, 2018.</strong>
+              <small>(Acesso em: 10 jun. 2024)</small><br>
+              <a href="http://basenacionalcomum.mec.gov.br/">http://basenacionalcomum.mec.gov.br/</a>
+            </li>
+          </ul>
+
+          <h2>Próximos capítulos sugeridos</h2>
+
+          <h3>Representação na Reta Numérica</h3>
+          <p>Estudar como posicionar números naturais, inteiros, racionais e irracionais na reta numérica ajuda a visualizar relações de ordem e distância entre valores.</p>
+          <a href="#">Estudar esse tema ➝</a>
+
+          <h3>Operações com Números Reais</h3>
+          <p>Aprender a somar, subtrair, multiplicar e dividir diferentes conjuntos numéricos reforça o uso prático da Matemática em problemas cotidianos e em outras disciplinas.</p>
+          <a href="#">Estudar esse tema ➝</a>
+
+          <h3>Intervalos e Conjuntos em Problemas do Dia a Dia</h3>
+          <p>Explorar intervalos numéricos amplia a compreensão sobre medidas de temperatura, horários, populações e outras aplicações que exigem faixa de valores.</p>
+          <a href="#">Estudar esse tema ➝</a>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // Toggle seções
+      document.querySelectorAll('h2[role="button"]').forEach((h2) => {
+        h2.addEventListener("click", () => toggleSection(h2));
+        h2.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") toggleSection(h2);
+        });
+      });
+      function toggleSection(h2) {
+        const content = h2.nextElementSibling.nextElementSibling;
+        const expanded = h2.getAttribute("aria-expanded") === "true";
+        h2.setAttribute("aria-expanded", !expanded);
+        content.hidden = expanded;
+      }
+
+      // Tema claro/escuro
+      document.getElementById("toggle-theme").onclick = () =>
+        document.body.classList.toggle("dark");
+
+      // Aumento/diminuição de fonte
+      const root = document.documentElement;
+      document.getElementById("font-increase").onclick = () => {
+        let fs = parseFloat(getComputedStyle(root).getPropertyValue("--font-size"));
+        root.style.setProperty("--font-size", fs + 0.1 + "rem");
+      };
+      document.getElementById("font-decrease").onclick = () => {
+        let fs = parseFloat(getComputedStyle(root).getPropertyValue("--font-size"));
+        root.style.setProperty("--font-size", fs - 0.1 + "rem");
+      };
+
+      // Leitura em voz alta
+      document.querySelectorAll("button.ouvir").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+            return;
+          }
+          const id = btn.getAttribute("data-section");
+          const text = document.getElementById(id).textContent;
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = "pt-BR";
+          speechSynthesis.speak(utter);
+        });
+      });
+    </script>
+  </body>
+</html>

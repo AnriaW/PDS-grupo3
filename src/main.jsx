@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import CreateApostila from './pages/CreateApostila';
 import Home from './pages/Home';
+import Loading from './pages/Loading';
 
 const router = createBrowserRouter([
   {
@@ -25,8 +26,12 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: '/criar-apostila',
+    path: '/create-new',
     element: <CreateApostila />,
+  },
+    {
+    path: '/loading',
+    element: <Loading />,
   },
 ]);
 

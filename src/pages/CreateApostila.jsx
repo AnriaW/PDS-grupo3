@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+//import Header from '../components/Header';
+//import { Link } from 'react-router-dom';
 
 export default function CreateApostila() {
   const [formData, setFormData] = useState({
-    email: 'seconomoglu_ucla.br',
+    email: 'seunome@ic.ufal.br',
     topico: 'Logaritmo',
     componente: 'Matemática',
     serie: '',
@@ -26,7 +29,10 @@ export default function CreateApostila() {
   };
 
   return (
+
     <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+      {/*<Header />*/}
+
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Teste - crie um capítulo de apostila digital</h1>
@@ -164,12 +170,14 @@ export default function CreateApostila() {
 
           {/* Botão de Submit */}
           <div className="text-center">
+            <Link to ="/loading">
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Gerar Apostila
             </button>
+            </Link>
           </div>
         </form>
       </div>
