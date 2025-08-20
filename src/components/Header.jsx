@@ -22,7 +22,7 @@ const Header = () => {
             Nova Apostila
           </Link>
           <Link 
-            to="/biblioteca" 
+            to="/library" 
             className="text-blue-600 hover:underline transition-colors duration-200"
           >
             Biblioteca

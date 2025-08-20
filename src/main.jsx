@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import CreateApostila from './pages/CreateApostila';
 import Home from './pages/Home';
 import Loading from './pages/Loading';
+import Library from './pages/Library';
 
 const router = createBrowserRouter([
   {
@@ -29,10 +30,16 @@ const router = createBrowserRouter([
     path: '/create-new',
     element: <CreateApostila />,
   },
-    {
+  
+  {
     path: '/loading',
     element: <Loading />,
   },
+  {
+    path: '/library',
+    element: <Library />,
+  },
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

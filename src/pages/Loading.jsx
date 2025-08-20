@@ -6,7 +6,7 @@ const Loading = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const totalTime = 30 * 1000;
+    const totalTime = 10 * 1000;
     const updateInterval = 100; 
 
     const startTime = Date.now();
@@ -19,7 +19,7 @@ const Loading = () => {
       if (newProgress >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-          navigate('../capitulo.html');
+          navigate('/library');
         }, 1000);
       }
     }, updateInterval);
@@ -56,7 +56,7 @@ const Loading = () => {
         <div className="flex justify-between text-sm text-gray-500 mb-2">
           <span>{Math.round(progress)}% concluído</span>
           <span>
-            {Math.ceil((30) * ((100 - progress) / 100))}s restantes
+            {Math.ceil((10) * ((100 - progress) / 100))}s restantes
           </span>
         </div>
 
