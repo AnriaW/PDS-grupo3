@@ -8,8 +8,8 @@ export default function Landing() {
       <header className="w-full border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Logo" className="w-10 h-10" />
-            <h1 className="text-2xl font-bold">Estudo Pronto</h1>
+            <img src="/logo.png" alt="Logo" className="w-15 h-15" />
+            <h1 className="text-2xl font-bold">Apostilab</h1>
           </div>
           <nav className="space-x-4">
             <nav className="space-x-4">
