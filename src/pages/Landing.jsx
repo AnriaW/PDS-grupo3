@@ -47,9 +47,17 @@ export default function Landing() {
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-            <div className="bg-gray-200 h-64 w-full flex items-center justify-center rounded-lg">
-              <span className="text-gray-500">[Imagem para chamar a atenção]</span>
-            </div>
+              <img src="/banner4.png" alt="banner1" className="h-64 w-full object-cover rounded-lg" />
+          </div>
+
+          {/* Imagem/Vídeo com largura total */}
+          <div className="mt-10 w-full">
+              <img src="/banner3.png" alt="banner2" className="h-64 w-full object-cover rounded-lg" />
+          </div>
+
+          {/* Imagem/Vídeo com largura total */}
+          <div className="mt-10 w-full">
+              <img src="/banner2.png" alt="banner3" className="h-64 w-full object-cover rounded-lg" />
           </div>
         </div>
       </main>
