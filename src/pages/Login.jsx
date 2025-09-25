@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [_error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica de login aqui
-    console.log('Login submitted:', { email, password });
+    setError('');
+
+    try {
+      await login(email, password);
+      navigate('/home');
+    } catch (error) {
+        setError('Login falhou', error)
+    }
   };
 
   return (
@@ -100,3 +110,5 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login
