@@ -1,16 +1,46 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { authAPI } from '../services/api';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [_error, setError] = useState('');
+  const [_isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica de registro aqui
-    console.log('Register submitted:', { name, email, password });
-  };
+    setError('');
+    setIsLoading(true);
+
+    console.log('Form submitted');
+
+    try {
+      const response = await authAPI.register({
+        name: name,
+        email: email,
+        password: password
+      });
+
+      localStorage.setItem('authToken', response.data.token);
+      navigate('/login'); // Redireciona para a tela de login
+
+    } catch (error) {
+        console.error('Erro de registro: ', error)
+
+        if (error.response?.data?.error) {
+                setError(error.response.data.error);
+            } else if (error.response?.status === 409) {
+                setError('Este email já está cadastrado');
+            } else {
+                setError('Registro falhou. Tente novamente.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
