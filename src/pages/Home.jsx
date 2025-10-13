@@ -23,7 +23,7 @@ export default function Home() {
             sem precisar de conhecimento prévio.
           </p>
           <button className="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-500 transition">
-            <Link to="/register">
+            <Link to="/create-new">
               Começar agora
             </Link>
           </button>
