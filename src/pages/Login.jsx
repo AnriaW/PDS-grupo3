@@ -18,6 +18,7 @@ const Login = () => {
       navigate('/library');
     } catch (error) {
         setError('Login falhou', error)
+        console.log('Login falhou')
     }
   };
 
