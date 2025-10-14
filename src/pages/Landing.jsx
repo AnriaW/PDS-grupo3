@@ -35,7 +35,7 @@ export default function Landing() {
           <p className="text-gray-700 mb-6 max-w-2xl">
             Gere automaticamente material de apoio didático,
             em conformidade com a <a className="text-blue-600 underline"
-              href="https://portal.mec.gov.br/conselho-nacional-de-educacao/base-nacional-comum-curricular-bncc">
+              href="https://basenacionalcomum.mec.gov.br/abase">
               BNCC</a>,
             em instantes.
           </p>
