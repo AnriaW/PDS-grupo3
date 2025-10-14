@@ -47,18 +47,34 @@ export default function Landing() {
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner4.png" alt="banner1" className="h-64 w-full object-cover rounded-lg" />
+              <img src="/banner1.png" alt="banner1" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner3.png" alt="banner2" className="h-64 w-full object-cover rounded-lg" />
+              <img src="/banner2.png" alt="banner2" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner2.png" alt="banner3" className="h-64 w-full object-cover rounded-lg" />
+              <img src="/banner3.png" alt="banner3" className="h-64 w-full object-cover rounded-lg" />
           </div>
+
+          {/* Imagem/Vídeo com largura total */}
+          <div className="mt-10 w-full">
+              <img src="/banner4.png" alt="banner4" className="h-64 w-full object-cover rounded-lg" />
+          </div>
+
+          {/* Imagem/Vídeo com largura total */}
+          <div className="mt-10 w-full">
+              <img src="/banner5.png" alt="banner5" className="h-64 w-full object-cover rounded-lg" />
+          </div>
+
+          {/* Imagem/Vídeo com largura total */}
+          <div className="mt-10 w-full">
+              <img src="/banner6.png" alt="banner6" className="h-64 w-full object-cover rounded-lg" />
+          </div>
+
         </div>
       </main>
 
@@ -66,9 +82,9 @@ export default function Landing() {
         {/* Seção de Estatística */}
         <section className="bg-blue-50 py-12 w-full">
           <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-gray-600 mb-2">Já somos</p>
+            <p className="text-gray-600 mb-2">Já Criamos</p>
             <p className="text-5xl font-bold text-blue-600 mb-2">123.456.789</p>
-            <p className="text-gray-600">criadores</p>
+            <p className="text-gray-600">Apostilas</p>
           </div>
         </section>
 

@@ -15,32 +15,28 @@ const Library = () => {
     {
       id: 1,
       title: 'Conjuntos Numéricos',
-      author: 'Tú',
       date: '2024-01-15',
       nivel: 'Intermediário',
       descricao: 'Estudo completo sobre conjuntos numéricos incluindo naturais, inteiros, racionais e irracionais.'
     },
     {
       id: 2,
-      title: 'Álgebra Básica',
-      author: 'Tai',
+      title: 'Fotossíntese',
       date: '2024-01-10', 
       nivel: 'Iniciante',
-      descricao: 'Introdução à álgebra com exercícios práticos e exemplos do cotidiano.'
+      descricao: 'Introdução sobre fotossíntese e seus processos biológicos para as plantas.'
     },
     {
       id: 3,
-      title: 'Geometria Plana',
-      author: 'Você',
+      title: 'Revolução Industrial',
       date: '2024-01-05',
       nivel: 'Avançado',
-      descricao: 'Conceitos fundamentais de geometria plana com aplicações práticas.'
+      descricao: 'Estudo avançado sobre a revolução industrial e seus impactos globais.'
     }
   ];
 
   const filteredApostilas = apostilas.filter(apostila =>
     apostila.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    apostila.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
     apostila.descricao.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -122,8 +118,6 @@ const Library = () => {
               
               <div className="space-y-2 text-sm text-gray-600 mb-4">
                 <div className="flex justify-between">
-                  <span>Autor:</span>
-                  <span className="font-medium">{apostila.author}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Data:</span>
