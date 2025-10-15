@@ -8,6 +8,7 @@ import CreateApostila from './pages/CreateApostila';
 import Home from './pages/Home';
 import Loading from './pages/Loading';
 import Library from './pages/Library';
+import Profile from './pages/Profile';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: '/library',
     element: <Library />,
+  },
+  {
+    path: '/profile',
+    element: <Profile />,
   },
   
 ]);
