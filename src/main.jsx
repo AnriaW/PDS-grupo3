@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Loading from './pages/Loading';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
+import Guide from './pages/Guide';
 
 const router = createBrowserRouter([
   {
@@ -31,7 +32,7 @@ const router = createBrowserRouter([
     path: '/create-new',
     element: <CreateApostila />,
   },
-  
+
   {
     path: '/loading',
     element: <Loading />,
@@ -44,7 +45,12 @@ const router = createBrowserRouter([
     path: '/profile',
     element: <Profile />,
   },
-  
+
+  {
+    path: '/guide',
+    element: <Guide />,
+  },
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
