@@ -1,60 +1,81 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from "../components/Footer";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
+import { getCookie } from '../hooks/cookies';
 
 const Library = () => {
-
-
+  const navigate = useNavigate();
   const [sortBy, setSortBy] = useState('recent');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedApostila, setSelectedApostila] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [apostilasDb, setApostilasDb] = useState([]);
 
-  // Dados de exemplo - apostilas como conteúdo único
-  const apostilas = [
-    {
-      id: 1,
-      title: 'Conjuntos Numéricos',
-      date: '2024-01-15',
-      nivel: 'Intermediário',
-      descricao: 'Estudo completo sobre conjuntos numéricos incluindo naturais, inteiros, racionais e irracionais.'
-    },
-    {
-      id: 2,
-      title: 'Fotossíntese',
-      date: '2024-01-10', 
-      nivel: 'Iniciante',
-      descricao: 'Introdução sobre fotossíntese e seus processos biológicos para as plantas.'
-    },
-    {
-      id: 3,
-      title: 'Revolução Industrial',
-      date: '2024-01-05',
-      nivel: 'Avançado',
-      descricao: 'Estudo avançado sobre a revolução industrial e seus impactos globais.'
+  useEffect(() => {
+    const fetchApostilas = async () => {
+      setLoading(true);
+      try {
+        const rawEmail = getCookie('user_email');
+        const email = rawEmail ? decodeURIComponent(rawEmail) : 'apostilabic@gmail.com';
+        console.log(email);
+
+        const { data, error } = await supabase
+          .from('files')
+          .select('*')
+          .eq('email', email)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        console.log(data);
+        setApostilasDb(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Erro ao buscar apostilas:', err);
+        setApostilasDb([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApostilas();
+  }, []);
+
+  const handleViewApostila = async (apostila) => {
+    if (apostila.is_generating) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('files')
+        .select('file')
+        .eq('id', apostila.id)
+        .single();
+
+      if (error) throw error;
+      
+      navigate('/apostila', { 
+        state: { htmlText: data.file } 
+      });
+    } catch (err) {
+      console.error('Erro ao carregar apostila:', err);
     }
-  ];
+  };
 
-  const filteredApostilas = apostilas.filter(apostila =>
-    apostila.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    apostila.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredApostilas = apostilasDb.filter(apostila => {
+    const title = (apostila.file?.title || '').toLowerCase();
+    const desc = (apostila.file?.descricao || '').toLowerCase();
+    const term = searchTerm.toLowerCase();
+    return title.includes(term) || desc.includes(term);
+  });
 
   const sortedApostilas = [...filteredApostilas].sort((a, b) => {
     if (sortBy === 'recent') {
-      return new Date(b.date) - new Date(a.date);
+      return new Date(b.created_at) - new Date(a.created_at);
     } else {
-      return a.title.localeCompare(b.title);
+      const at = (a.file?.title || '').toString();
+      const bt = (b.file?.title || '').toString();
+      return at.localeCompare(bt);
     }
   });
-
-  const handleViewApostila = (apostila) => {
-    setSelectedApostila(apostila);
-  };
-
-  const handleBackToList = () => {
-    setSelectedApostila(null);
-  };
 
   // View principal da biblioteca
   return (
@@ -110,35 +131,57 @@ const Library = () => {
 
         {/* Grid de apostilas */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {sortedApostilas.map((apostila) => (
-            <div key={apostila.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
-                 onClick={() => handleViewApostila(apostila)}>
-              
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">{apostila.title}</h3>
-              
-              <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <div className="flex justify-between">
+          {loading && (
+            Array.from({ length: 6 }).map((_, idx) => (
+              <div key={`skeleton-${idx}`} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
+                <div className="h-5 w-2/3 bg-gray-200 rounded mb-3"></div>
+                <div className="space-y-2 text-sm mb-4">
+                  <div className="flex justify-between">
+                    <span className="h-4 w-16 bg-gray-200 rounded"></span>
+                    <span className="h-4 w-24 bg-gray-200 rounded"></span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="h-4 w-16 bg-gray-200 rounded"></span>
+                    <span className="h-4 w-20 bg-gray-200 rounded"></span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Data:</span>
-                  <span className="font-medium">{new Date(apostila.date).toLocaleDateString('pt-BR')}</span>
+                <div className="space-y-2 mb-4">
+                  <div className="h-3 w-full bg-gray-200 rounded"></div>
+                  <div className="h-3 w-11/12 bg-gray-200 rounded"></div>
+                  <div className="h-3 w-10/12 bg-gray-200 rounded"></div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Nível:</span>
-                  <span className="font-medium">{apostila.nivel}</span>
-                </div>
+                <div className="h-9 w-full bg-gray-200 rounded"></div>
               </div>
-
-              <p className="text-sm text-gray-500 mb-4 line-clamp-3">{apostila.descricao}</p>
-
-              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 transition">
-                {/*<Link to={`/apostila/${apostila.id}`}>*/}
-                <Link to = '/capitulo.html'>
-                Ver Apostila Completa
-                </Link>
-              </button>
-            </div>
-          ))}
+            ))
+          )}
+          {!loading && sortedApostilas.map((apostila) => {
+            const title = apostila.titulo || 'Capítulo';
+            const descricao = apostila.file?.descricao || '';
+            const disabled = !!apostila.is_generating;
+            return (
+              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md cursor-pointer'}`}>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">{title}</h3>
+                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                  <div className="flex justify-between">
+                    <span>Data:</span>
+                    <span className="font-medium">{new Date(apostila.created_at).toLocaleDateString('pt-BR')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <span className={`font-medium ${disabled ? 'text-yellow-600' : 'text-green-700'}`}>{disabled ? 'Gerando...' : 'Pronto'}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mb-4 line-clamp-3">{descricao}</p>
+                <button 
+                  className={`w-full rounded py-2 px-4 transition ${disabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`} 
+                  disabled={disabled}
+                  onClick={() => handleViewApostila(apostila)}
+                >
+                  Ver Apostila Completa
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Mensagem se não houver apostilas */}

@@ -10,6 +10,7 @@ import Loading from './pages/Loading';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
 import Guide from './pages/Guide';
+import Apostila from './pages/Apostila';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: '/guide',
     element: <Guide />,
+  },
+  {
+    path: '/apostila',
+    element: <Apostila />,
   },
 
 ]);

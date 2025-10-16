@@ -33,6 +33,13 @@ export const useAuth = () => {
         
         localStorage.setItem('authToken', token);
         setUser(user);
+        // Salva cookie com email do usuário por 30 dias
+        try {
+            const emailToStore = encodeURIComponent(user?.email || email);
+            document.cookie = `user_email=${emailToStore}; path=/; max-age=${60 * 60 * 24 * 30}`;
+        } catch (error) {
+            console.error('Erro ao salvar cookie:', error);
+        }
         return user;
     };
 
@@ -42,12 +49,25 @@ export const useAuth = () => {
         
         localStorage.setItem('authToken', token);
         setUser(user);
+        // Salva cookie com email do usuário por 30 dias
+        try {
+            const emailToStore = encodeURIComponent(user?.email || email);
+            document.cookie = `user_email=${emailToStore}; path=/; max-age=${60 * 60 * 24 * 30}`;
+        } catch (error) {
+            console.error('Erro ao salvar cookie:', error);
+        }
         return user;
     };
 
     const logout = () => {
         localStorage.removeItem('authToken');
         setUser(null);
+        // Remove cookie do email
+        try {
+            document.cookie = 'user_email=; path=/; max-age=0';
+        } catch (error) {
+            console.error('Erro ao remover cookie:', error);
+        }
     };
 
     return { user, login, register, logout, loading };

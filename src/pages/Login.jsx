@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
+import Header from '../components/Header';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,8 +24,28 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
+    <header className="w-full border-b border-gray-300">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
+        <div className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="Logo" className="w-15 h-15" />
+            <h1 className="text-2xl font-bold">Apostilab</h1>
+          </a>
+        </div>
+        <nav className="space-x-4">
+          <nav className="space-x-4">
+            {/* <Link to="/login" className="text-blue-600 hover:underline">
+              Login
+            </Link> */}
+            <Link to="/register" className="text-blue-600 hover:underline">
+              Registrar-se
+            </Link>
+          </nav>
+        </nav>
+      </div>
+    </header>
+      <div className="sm:mx-auto sm:w-full sm:max-w-md pt-12">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Acesse sua conta
         </h2>

@@ -82,9 +82,8 @@ export default function Landing() {
         {/* Seção de Estatística */}
         <section className="bg-blue-50 py-12 w-full">
           <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-gray-600 mb-2">Já Criamos</p>
-            <p className="text-5xl font-bold text-blue-600 mb-2">123.456.789</p>
-            <p className="text-gray-600">Apostilas</p>
+            <p className="text-5xl font-bold text-blue-600 mb-2">Centenas</p>
+            <p className="text-gray-600">de capítulos gerados todos os dias</p>
           </div>
         </section>
 

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-//import Header from '../components/Header';
-//import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
+import Header from '../components/Header';
+import { getCookie } from '../hooks/cookies';
+
 
 export default function CreateApostila() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: 'seunome@ic.ufal.br',
-    topico: 'Logaritmo',
-    componente: 'Matemática',
+    topico: '',
+    componente: '',
     serie: '',
     dificuldade: '',
     exerciciosGuiados: 0,
@@ -22,18 +24,42 @@ export default function CreateApostila() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dados do formulário:', formData);
-    // Lógica para criar a apostila aqui
+
+    const id = uuid();
+
+    const payload = {
+      id,
+      email: getCookie('user_email') || 'apostilabic@gmail.com',
+      topico: String(formData.topico || '').trim(),
+      componente: String(formData.componente || '').trim(),
+      serie: String(formData.serie || '').trim(),
+      dificuldade: Number(formData.dificuldade),
+      guiados: Number(formData.exerciciosGuiados),
+      exercicios: Number(formData.exercicios)
+    };
+
+    try {
+      localStorage.setItem('lastGeneratedId', id);
+
+      await fetch('https://primary-production-6beb.up.railway.app/webhook/criar-apostila', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (error) {
+      console.error('Erro ao criar apostila:', error);
+    } finally {
+      navigate('/loading');
+    }
   };
 
   return (
 
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-      {/*<Header />*/}
-
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-white">
+        <Header />
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Teste - crie um capítulo de apostila digital</h1>
           <p className="text-gray-600">Preencha os detalhes abaixo para gerar sua apostila personalizada</p>
@@ -50,6 +76,7 @@ export default function CreateApostila() {
               type="text"
               id="topico"
               name="topico"
+              placeholder="Ex: Logaritmo"
               value={formData.topico}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -66,6 +93,7 @@ export default function CreateApostila() {
               type="text"
               id="componente"
               name="componente"
+              placeholder="Ex: Matemática"
               value={formData.componente}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -87,10 +115,13 @@ export default function CreateApostila() {
               required
             >
               <option value="">Select an option ...</option>
-              <option value="1">1ª Série</option>
-              <option value="2">2ª Série</option>
-              <option value="3">3ª Série</option>
-              <option value="4">4ª Série</option>
+              <option value="1">6º ano do ensino fundamental</option>
+              <option value="2">7º ano do ensino fundamental</option>
+              <option value="3">8º ano do ensino fundamental</option>
+              <option value="4">9º ano do ensino fundamental</option>
+              <option value="5">1º ano do ensino médio</option>
+              <option value="6">2º ano do ensino médio</option>
+              <option value="7">3º ano do ensino médio</option>
             </select>
           </div>
 
@@ -108,10 +139,10 @@ export default function CreateApostila() {
               required
             >
               <option value="">Selecione...</option>
-              <option value="0">0 (muito fácil)</option>
-              <option value="1">1 (fácil)</option>
-              <option value="2">2 (média)</option>
-              <option value="3">3 (difícil)</option>
+              <option value="0">Trivial</option>
+              <option value="1">Fácil</option>
+              <option value="2">Médio</option>
+              <option value="3">Difícil</option>
             </select>
           </div>
 
@@ -155,14 +186,12 @@ export default function CreateApostila() {
 
           {/* Botão de Submit */}
           <div className="text-center">
-            <Link to ="/loading">
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Gerar Apostila
             </button>
-            </Link>
           </div>
         </form>
       </div>
