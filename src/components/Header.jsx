@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
@@ -8,8 +9,15 @@ const Header = () => {
     email: 'joao.silva@email.com',
     photo: null
   });
+  const { logout } = useAuth();
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    console.log('Usuário deslogado');
+    navigate('/');
+  };
 
   // Buscar dados do usuário do localStorage
   useEffect(() => {
@@ -18,16 +26,7 @@ const Header = () => {
       if (savedUser) {
         setUser(JSON.parse(savedUser));
       } else {
-        // Se não houver dados salvos, usar os dados padrão e salvar
-        const defaultUser = {
-          name: 'João Silva',
-          email: 'joao.silva@email.com',
-          photo: null,
-          level: 'Intermediário',
-          memberSince: '2024-01-01'
-        };
-        setUser(defaultUser);
-        localStorage.setItem('userData', JSON.stringify(defaultUser));
+        navigate('/');
       }
     };
 
@@ -46,11 +45,6 @@ const Header = () => {
     setUserMenuOpen(!userMenuOpen);
   };
 
-  const handleLogout = () => {
-    // Lógica de logout aqui
-    console.log('Usuário deslogado');
-    navigate('/');
-  };
 
   const handleProfileClick = () => {
     navigate('/profile');
