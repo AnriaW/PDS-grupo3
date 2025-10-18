@@ -3,29 +3,36 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
 
-const displayError = () => {
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [_error, setError] = useState(false);
+  const [_loginErr, setLoginErr] = useState(false);
   const [_isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+
+    console.log('Form submitted');
 
     try {
       setIsLoading(true);
-      setError(false);
+      setLoginErr(false);
+
+      await sleep(500);
+
       await login(email, password);
+
+      await sleep(500);
+
       navigate('/library');
     } catch (error) {
-      setError(true)
-      console.log('Login falhou')
+      setLoginErr(true)
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +73,7 @@ const Login = () => {
           </Link>
         </p>
       </div>
-      {_error && (
+      {_loginErr && (
         <div
           id="error-message"
           className="max-w-md mx-auto mt-6 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm animate-fade-in"
