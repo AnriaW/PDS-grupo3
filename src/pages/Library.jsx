@@ -16,9 +16,9 @@ const Library = () => {
     const fetchApostilas = async () => {
       setLoading(true);
       try {
-        const rawEmail = getCookie('user_email');
+        const userData = localStorage.getItem("userData");
+        const rawEmail = JSON.parse(userData)?.email;
         const email = rawEmail ? decodeURIComponent(rawEmail) : 'apostilabic@gmail.com';
-        console.log(email);
 
         const { data, error } = await supabase
           .from('files')
@@ -27,7 +27,6 @@ const Library = () => {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        console.log(data);
         setApostilasDb(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Erro ao buscar apostilas:', err);
@@ -42,7 +41,7 @@ const Library = () => {
 
   const handleViewApostila = async (apostila) => {
     if (apostila.is_generating) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('files')
@@ -51,9 +50,9 @@ const Library = () => {
         .single();
 
       if (error) throw error;
-      
-      navigate('/apostila', { 
-        state: { htmlText: data.file } 
+
+      navigate('/apostila', {
+        state: { htmlText: data.file }
       });
     } catch (err) {
       console.error('Erro ao carregar apostila:', err);
@@ -80,7 +79,7 @@ const Library = () => {
   // View principal da biblioteca
   return (
     <div className="min-h-screen bg-white">
-        <Header />
+      <Header />
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Cabeçalho */}
         <div className="mb-8">
@@ -172,8 +171,8 @@ const Library = () => {
                   </div>
                 </div>
                 <p className="text-sm text-gray-500 mb-4 line-clamp-3">{descricao}</p>
-                <button 
-                  className={`w-full rounded py-2 px-4 transition ${disabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`} 
+                <button
+                  className={`w-full rounded py-2 px-4 transition ${disabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
                   disabled={disabled}
                   onClick={() => handleViewApostila(apostila)}
                 >

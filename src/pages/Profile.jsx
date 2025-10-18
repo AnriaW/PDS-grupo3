@@ -41,7 +41,7 @@ const Profile = () => {
 
   const handleSave = () => {
     setIsLoading(true);
-    
+
     // Simula uma requisição API
     setTimeout(() => {
       const updatedUser = {
@@ -50,14 +50,14 @@ const Profile = () => {
         email: tempEmail,
         photo: user.photo
       };
-      
+
       setUser(updatedUser);
       setEditMode(false);
       setIsLoading(false);
-      
+
       // Salva no localStorage
       localStorage.setItem('userData', JSON.stringify(updatedUser));
-      
+
       // Dispara um evento customizado para atualizar o Header e outros componentes
       window.dispatchEvent(new Event('userDataUpdated'));
     }, 1000);
@@ -80,7 +80,7 @@ const Profile = () => {
           photo: e.target.result
         };
         setUser(updatedUser);
-        
+
         // Salva no localStorage
         localStorage.setItem('userData', JSON.stringify(updatedUser));
         window.dispatchEvent(new Event('userDataUpdated'));
@@ -100,7 +100,7 @@ const Profile = () => {
       <Header />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
-        
+
         {/* Cabeçalho */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Meu Perfil</h1>
@@ -109,22 +109,22 @@ const Profile = () => {
 
         {/* Card Principal */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          
+
           {/* Foto e Nome */}
           <div className="flex items-center space-x-6 mb-6">
             <div className="relative">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl font-semibold">
                 {user.photo ? (
-                  <img 
-                    src={user.photo} 
-                    alt="Foto do usuário" 
+                  <img
+                    src={user.photo}
+                    alt="Foto do usuário"
                     className="w-20 h-20 rounded-full object-cover"
                   />
                 ) : (
                   user.name.charAt(0)
                 )}
               </div>
-              
+
               {/* Botão para alterar foto */}
               <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer hover:bg-blue-500 transition">
                 <input
@@ -163,7 +163,7 @@ const Profile = () => {
                   <h2 className="text-2xl font-semibold text-gray-900">{user.name}</h2>
                   <p className="text-gray-600">{user.email}</p>
                   <p className="text-sm text-gray-500">
-                    Membro desde {new Date(user.memberSince).toLocaleDateString('pt-BR')}
+                    Membro desde {new Date(user.created_at).toLocaleDateString('pt-BR')}
                   </p>
                 </div>
               )}
@@ -212,7 +212,7 @@ const Profile = () => {
         {/* Configurações Adicionais */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Configurações</h3>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
               <div>
@@ -234,10 +234,10 @@ const Profile = () => {
               <p className="font-medium text-red-500">Excluir conta</p>
               <p className="text-sm text-red-600">Excluir conta permanentemente</p>
             </button>
-          </div> 
+          </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

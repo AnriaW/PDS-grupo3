@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,46 +28,47 @@ export const useAuth = () => {
   };
 
   const login = async (email, password) => {
-    const response = await authAPI.login({ email, password });
-    const { token, user } = response.data;
+    const responseLogin = await authAPI.login({ email, password });
+    const token = responseLogin.data.access_token;
+
+    if (!token) {
+      throw new Error('Token não recebido no login');
+    }
+
+    const responseProfile = await authAPI.getProfile(token);
+    if (responseProfile.data) { console.log(responseProfile.data); }
 
     localStorage.setItem('authToken', token);
+    localStorage.setItem('userData', JSON.stringify(responseProfile.data));
     setUser(user);
 
-    try {
-      const emailToStore = encodeURIComponent(user?.email || email);
-      document.cookie = `user_email=${emailToStore}; path=/; max-age=${60 * 60 * 24 * 30}`;
-
-    } catch (error) {
-      console.error('Erro ao salvar cookie:', error);
-    }
     return user;
   };
 
   const register = async (email, password) => {
     const response = await authAPI.register({ email, password });
-    const { token, user } = response.data;
+    const token = response.data.access_token;
+
+    if (!token) {
+      throw new Error('Token não recebido no login');
+    }
+
+    const responseProfile = await authAPI.getProfile(token);
+    if (responseProfile.data) { console.log(responseProfile.data); }
 
     localStorage.setItem('authToken', token);
+    localStorage.setItem('userData', JSON.stringify(responseProfile.data));
     setUser(user);
-    // Salva cookie com email do usuário por 30 dias
-    try {
-      const emailToStore = encodeURIComponent(user?.email || email);
-      document.cookie = `user_email=${emailToStore}; path=/; max-age=${60 * 60 * 24 * 30}`;
-    } catch (error) {
-      console.error('Erro ao salvar cookie:', error);
-    }
+
     return user;
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
-    setUser(null);
-    // Remove cookie do email
     try {
-      document.cookie = 'user_email=; path=/; max-age=0';
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
     } catch (error) {
-      console.error('Erro ao remover cookie:', error);
+      console.error('Erro ao remover dados de autenticação:', error);
     }
   };
 
