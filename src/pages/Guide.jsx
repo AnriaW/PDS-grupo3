@@ -19,7 +19,7 @@ const Guide = () => {
         {
           step: 2,
           title: 'Preencha os detalhes',
-          description: 'Informe o assunto, componente curricular, série, dificuldade e quantidade de exercícios',
+          description: 'Informe o assunto, componente curricular, ano, dificuldade e quantidade de exercícios',
           icon: '📋'
         },
         {

@@ -10,7 +10,7 @@ export default function CreateApostila() {
   const [formData, setFormData] = useState({
     topico: '',
     componente: '',
-    serie: '',
+    ano: '',
     dificuldade: '',
     exerciciosGuiados: 0,
     exercicios: 0
@@ -34,7 +34,7 @@ export default function CreateApostila() {
       email: getCookie('user_email') || 'apostilabic@gmail.com',
       topico: String(formData.topico || '').trim(),
       componente: String(formData.componente || '').trim(),
-      serie: String(formData.serie || '').trim(),
+      ano: String(formData.ano || '').trim(),
       dificuldade: Number(formData.dificuldade),
       guiados: Number(formData.exerciciosGuiados),
       exercicios: Number(formData.exercicios)
@@ -58,7 +58,7 @@ export default function CreateApostila() {
   return (
 
     <div className="min-h-screen bg-white">
-        <Header />
+      <Header />
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Teste - crie um capítulo de apostila digital</h1>
@@ -101,15 +101,15 @@ export default function CreateApostila() {
             />
           </div>
 
-          {/* Campo Série */}
+          {/* Campo Ano */}
           <div className="mb-6">
-            <label htmlFor="serie" className="block text-sm font-medium text-gray-700 mb-1">
-              Série *
+            <label htmlFor="ano" className="block text-sm font-medium text-gray-700 mb-1">
+              Ano *
             </label>
             <select
-              id="serie"
-              name="serie"
-              value={formData.serie}
+              id="ano"
+              name="ano"
+              value={formData.ano}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
