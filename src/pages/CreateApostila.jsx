@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import Header from '../components/Header';
-import { getCookie } from '../hooks/cookies';
 
 
 export default function CreateApostila() {
@@ -27,11 +26,12 @@ export default function CreateApostila() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userData = localStorage.getItem("userData");
     const id = uuid();
 
     const payload = {
       id,
-      email: getCookie('user_email') || 'apostilabic@gmail.com',
+      email: JSON.parse(userData)?.email || 'apostilabic@gmail.com',
       topico: String(formData.topico || '').trim(),
       componente: String(formData.componente || '').trim(),
       ano: String(formData.ano || '').trim(),

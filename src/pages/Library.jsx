@@ -3,7 +3,6 @@ import Header from '../components/Header';
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { getCookie } from '../hooks/cookies';
 
 const Library = () => {
   const navigate = useNavigate();
