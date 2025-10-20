@@ -205,9 +205,6 @@ export default function Apostila({ htmlText }) {
           </div>
         )}
       </div>
-      <div>
-        <input type="button" value="Print this page" onClick="window.print()">Imprimir</input>
-      </div>
     </div>
   );
 }
