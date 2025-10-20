@@ -5,7 +5,23 @@ export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isDevAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === 'true';
+
   useEffect(() => {
+    if (isDevAuthDisabled) {
+      const mockUser = {
+        id: 'dev-001',
+        name: 'Dev User',
+        email: 'dev@email.com',
+      };
+      localStorage.setItem('authToken', 'mock-token');
+      localStorage.setItem('userData', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setLoading(false);
+      console.warn('[Auth] Using mock user (VITE_DISABLE_AUTH=true)');
+      return;
+    }
+
     checkAuth();
   }, []);
 
@@ -28,6 +44,13 @@ export const useAuth = () => {
   };
 
   const login = async (email, password) => {
+    if (isDevAuthDisabled) {
+      const mockUser = JSON.parse(localStorage.getItem('userData'));
+      setUser(mockUser);
+      return mockUser;
+    }
+
+    
     const responseLogin = await authAPI.login({ email, password });
     const token = responseLogin.data.access_token;
 
