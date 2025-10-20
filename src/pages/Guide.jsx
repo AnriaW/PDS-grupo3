@@ -106,7 +106,7 @@ const Guide = () => {
         {
           step: 2,
           title: 'Ajuste a dificuldade',
-          description: 'Considere o nível dos estudantes ao definir a dificuldade (0=muito fácil, 3=difícil)',
+          description: 'Considere o nível dos estudantes ao definir a dificuldade',
           icon: '📊'
         },
         {
@@ -136,7 +136,7 @@ const Guide = () => {
     },
     {
       question: 'Quantas apostilas posso criar?',
-      answer: 'Não há limites! Você pode criar quantas apostilas precisar para seus estudos ou aulas.'
+      answer: 'Não há limites! Você pode criar quantas apostilas precisar para as suas aulas.'
     },
     {
       question: 'Preciso de conexão com internet para usar?',
