@@ -30,7 +30,7 @@ const Login = () => {
 
       await sleep(500);
 
-      navigate('/library');
+      navigate('/home');
     } catch (error) {
       setLoginErr(true)
     } finally {
