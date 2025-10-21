@@ -1,29 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from "../components/Footer";
+import Header from '../components/Header';
 
 export default function Landing() {
+  const [isUserLoggedIn, setIsUserLoggedIn] = React.useState(false);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('userData');
+    if (savedUser) {
+      setIsUserLoggedIn(true);
+    };
+  }, []);
+
+  const header = isUserLoggedIn ? <Header /> : (
+    < header className="w-full border-b border-gray-300" >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="Logo" className="w-15 h-15" />
+          <h1 className="text-2xl font-bold">Apostilab</h1>
+        </div>
+        <nav className="space-x-4">
+          <nav className="space-x-4">
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Login
+            </Link>
+            <Link to="/register" className="text-blue-600 hover:underline">
+              Registrar-se
+            </Link>
+          </nav>
+        </nav>
+      </div>
+    </header >
+  );
+
   return (
     <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
       {/* Cabeçalho - agora com container interno para limitar o conteúdo */}
-      <header className="w-full border-b border-gray-300">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Logo" className="w-15 h-15" />
-            <h1 className="text-2xl font-bold">Apostilab</h1>
-          </div>
-          <nav className="space-x-4">
-            <nav className="space-x-4">
-              <Link to="/login" className="text-blue-600 hover:underline">
-                Login
-              </Link>
-              <Link to="/register" className="text-blue-600 hover:underline">
-                Registrar-se
-              </Link>
-            </nav>
-          </nav>
-        </div>
-      </header>
+
+      {header}
 
       {/* Hero Section - conteúdo centralizado mas com fundo de largura total */}
       <main className="flex-1 w-full">
@@ -47,32 +62,32 @@ export default function Landing() {
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner1.png" alt="banner1" className="h-64 w-full object-cover rounded-lg" />
+            <img src="/banner1.png" alt="banner1" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner2.png" alt="banner2" className="h-64 w-full object-cover rounded-lg" />
+            <img src="/banner2.png" alt="banner2" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner3.png" alt="banner3" className="h-64 w-full object-cover rounded-lg" />
+            <img src="/banner3.png" alt="banner3" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner4.png" alt="banner4" className="h-64 w-full object-cover rounded-lg" />
+            <img src="/banner4.png" alt="banner4" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner5.png" alt="banner5" className="h-64 w-full object-cover rounded-lg" />
+            <img src="/banner5.png" alt="banner5" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
           {/* Imagem/Vídeo com largura total */}
           <div className="mt-10 w-full">
-              <img src="/banner6.png" alt="banner6" className="h-64 w-full object-cover rounded-lg" />
+            <img src="/banner6.png" alt="banner6" className="h-64 w-full object-cover rounded-lg" />
           </div>
 
         </div>
@@ -80,11 +95,7 @@ export default function Landing() {
 
       <main className="flex-1 w-full">
         {/* Seção de Estatística */}
-        <section className="bg-blue-50 py-12 w-full">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-5xl font-bold text-blue-600 mb-2">Centenas</p>
-            <p className="text-gray-600">de capítulos gerados todos os dias</p>
-          </div>
+        <section className="bg-blue-50 py-6 w-full">
         </section>
 
         {/* Seção Hero */}
