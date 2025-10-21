@@ -153,19 +153,19 @@ const Guide = () => {
       <Header />
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        
+
         {/* Cabeçalho */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             📖 Guia do Usuário
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Aprenda a usar todas as funcionalidades do MeuApp para criar apostilas incríveis
+            Aprenda a usar todas as funcionalidades do Apostilab para criar apostilas incríveis
           </p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-8">
-          
+
           {/* Menu Lateral */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
@@ -173,41 +173,37 @@ const Guide = () => {
               <nav className="space-y-2">
                 <button
                   onClick={() => setActiveSection('criar')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                    activeSection === 'criar' 
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'criar'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                 >
                   📝 Criando Apostilas
                 </button>
                 <button
                   onClick={() => setActiveSection('biblioteca')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                    activeSection === 'biblioteca' 
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'biblioteca'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                 >
                   📚 Gerenciando Biblioteca
                 </button>
                 <button
                   onClick={() => setActiveSection('perfil')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                    activeSection === 'perfil' 
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'perfil'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                 >
                   👤 Personalizando Perfil
                 </button>
                 <button
                   onClick={() => setActiveSection('dicas')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                    activeSection === 'dicas' 
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'dicas'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                 >
                   💡 Dicas e Melhores Práticas
                 </button>
@@ -236,7 +232,7 @@ const Guide = () => {
 
           {/* Conteúdo Principal */}
           <div className="lg:col-span-3">
-            
+
             {/* Seção Ativa */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -266,7 +262,7 @@ const Guide = () => {
             {/* FAQ */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">❓ Perguntas Frequentes</h2>
-              
+
               <div className="space-y-4">
                 {faqs.map((faq, index) => (
                   <div key={index} className="border border-gray-200 rounded-lg p-4">
