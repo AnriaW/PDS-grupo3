@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from "../components/Footer";
 import CriarApostila from "../components/NewApostilaButton"
 
 const Dashboard = () => {
+  const [userName, setUserName] = React.useState('Usuário');
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('userData');
+    if (savedUser) {
+      setUserName(JSON.parse(savedUser).name);
+    };
+  }, []);
+
   const apostilasRecentes = [
     {
       id: 1,
@@ -15,7 +24,7 @@ const Dashboard = () => {
     {
       id: 2,
       title: 'Fotossíntese',
-      materia: 'Biologia', 
+      materia: 'Biologia',
       data: '14/01/2024'
     },
     {
@@ -30,11 +39,11 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-4xl mx-auto px-6 py-8">
-        
+
         {/* Saudação Simples */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Bem-vindo de volta! 👋
+            Bem-vindo de volta, {userName.split(' ')[0]}! 👋
           </h1>
           <p className="text-gray-600">
             O que vamos criar hoje?
@@ -49,7 +58,7 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Suas Apostilas Recentes
           </h2>
-          
+
           <div className="space-y-3">
             {apostilasRecentes.map((apostila) => (
               <Link
@@ -73,8 +82,8 @@ const Dashboard = () => {
 
           {/* Link para ver todas */}
           <div className="text-center mt-6">
-            <Link 
-              to="/library" 
+            <Link
+              to="/library"
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
               Ver todas as apostilas
@@ -91,7 +100,7 @@ const Dashboard = () => {
             <div className="text-2xl mb-2">📚</div>
             <span className="font-medium text-gray-700">Biblioteca</span>
           </Link>
-          
+
           <Link
             to="/guide"
             className="bg-white p-4 rounded-lg border border-gray-200 text-center hover:bg-gray-50 transition"
