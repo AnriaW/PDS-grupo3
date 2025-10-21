@@ -115,13 +115,13 @@ export default function CreateApostila() {
               required
             >
               <option value="">Select an option ...</option>
-              <option value="1">6º ano do ensino fundamental</option>
-              <option value="2">7º ano do ensino fundamental</option>
-              <option value="3">8º ano do ensino fundamental</option>
-              <option value="4">9º ano do ensino fundamental</option>
-              <option value="5">1º ano do ensino médio</option>
-              <option value="6">2º ano do ensino médio</option>
-              <option value="7">3º ano do ensino médio</option>
+              <option value="6o ano do fundamental">6º ano do ensino fundamental</option>
+              <option value="7o ano do fundamental">7º ano do ensino fundamental</option>
+              <option value="8o ano do fundamental">8º ano do ensino fundamental</option>
+              <option value="9o ano do fundamental">9º ano do ensino fundamental</option>
+              <option value="1o ano do medio">1º ano do ensino médio</option>
+              <option value="2o ano do medio">2º ano do ensino médio</option>
+              <option value="3o ano do medio">3º ano do ensino médio</option>
             </select>
           </div>
 
