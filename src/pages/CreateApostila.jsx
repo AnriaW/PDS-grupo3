@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import Header from '../components/Header';
-import { getCookie } from '../hooks/cookies';
 
 
 export default function CreateApostila() {
@@ -27,11 +26,12 @@ export default function CreateApostila() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userData = localStorage.getItem("userData");
     const id = uuid();
 
     const payload = {
       id,
-      email: getCookie('user_email') || 'apostilabic@gmail.com',
+      email: JSON.parse(userData)?.email || 'apostilabic@gmail.com',
       topico: String(formData.topico || '').trim(),
       componente: String(formData.componente || '').trim(),
       ano: String(formData.ano || '').trim(),
@@ -61,7 +61,7 @@ export default function CreateApostila() {
       <Header />
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Teste - crie um capítulo de apostila digital</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Crie um capítulo de apostila digital</h1>
           <p className="text-gray-600">Preencha os detalhes abaixo para gerar sua apostila personalizada</p>
         </div>
 

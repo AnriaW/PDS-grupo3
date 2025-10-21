@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from "../components/Footer";
+import CriarApostila from "../components/NewApostilaButton"
 
 const Dashboard = () => {
   const apostilasRecentes = [
@@ -41,14 +42,7 @@ const Dashboard = () => {
         </div>
 
         {/* Botão Principal - Criar Nova Apostila */}
-        <div className="text-center mb-12">
-          <Link
-            to="/create-new"
-            className="inline-block bg-blue-600 text-white text-lg font-semibold py-4 px-8 rounded-lg hover:bg-blue-500 transition shadow-md"
-          >
-            ➕ Criar Nova Apostila
-          </Link>
-        </div>
+        <CriarApostila></CriarApostila>
 
         {/* Apostilas Recentes */}
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
