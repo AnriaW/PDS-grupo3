@@ -33,7 +33,7 @@ export default function Register() {
       localStorage.setItem('authToken', response.data.token);
       setSuccess(true);
       await sleep(3000);
-      navigate('/login'); // Redireciona para a tela de login
+      navigate('/home'); // Redireciona para a tela de login
 
     } catch (error) {
       console.error('Erro de registro: ', error)
