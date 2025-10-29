@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import Header from '../components/Header';
+import { apostilaAPI } from '../services/api';
 
 
 export default function CreateApostila() {
@@ -42,6 +43,8 @@ export default function CreateApostila() {
 
     try {
       localStorage.setItem('lastGeneratedId', id);
+
+      await apostilaAPI.createApostila(id);
 
       await fetch('https://primary-production-6beb.up.railway.app/webhook/criar-apostila', {
         method: 'POST',
