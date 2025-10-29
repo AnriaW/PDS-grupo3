@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import CriarApostila from "../components/NewApostilaButton";
 import { supabase } from '../supabase';
 import { useNavigate } from 'react-router-dom';
+import { apostilaAPI } from '../services/api';
 
 const Home = () => {
   const [userName, setUserName] = useState('Usuário');
@@ -49,14 +50,18 @@ const Home = () => {
     if (apostila.is_generating) return;
 
     try {
-      const { data, error } = await supabase
-        .from('files')
-        .select('file')
-        .eq('id', apostila.id)
-        .single();
+      var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
+      console.log(data.file.length);
+      if (data.file.length === 0) {
+        var { data, error } = await supabase
+          .from('files')
+          .select('file')
+          .eq('id', apostila.id)
+          .single();
+        console.log('Fallback to Supabase file fetch');
+      }
 
       if (error) throw error;
-
       navigate('/apostila', {
         state: { htmlText: data.file }
       });
@@ -110,13 +115,12 @@ const Home = () => {
               {apostilasRecentes.map((apostila) => {
                 const title = apostila.titulo || 'Capítulo';
                 const disabled = !!apostila.is_generating;
-                
+
                 return (
                   <div
                     key={apostila.id}
-                    className={`flex justify-between items-center p-4 border border-gray-200 rounded-lg transition ${
-                      disabled ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
-                    }`}
+                    className={`flex justify-between items-center p-4 border border-gray-200 rounded-lg transition ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'
+                      }`}
                     onClick={() => !disabled && handleViewApostila(apostila)}
                   >
                     <div>
@@ -129,9 +133,8 @@ const Home = () => {
                       <span className="text-sm text-gray-500">
                         {new Date(apostila.created_at).toLocaleDateString('pt-BR')}
                       </span>
-                      <div className={`text-sm font-medium mt-1 ${
-                        disabled ? 'text-gray-500' : 'text-blue-600'
-                      }`}>
+                      <div className={`text-sm font-medium mt-1 ${disabled ? 'text-gray-500' : 'text-blue-600'
+                        }`}>
                         {disabled ? 'Processando...' : 'Abrir →'}
                       </div>
                     </div>
