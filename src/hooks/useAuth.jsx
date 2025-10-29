@@ -50,7 +50,7 @@ export const useAuth = () => {
       return mockUser;
     }
 
-    
+
     const responseLogin = await authAPI.login({ email, password });
     const token = responseLogin.data.access_token;
 
@@ -58,10 +58,11 @@ export const useAuth = () => {
       throw new Error('Token não recebido no login');
     }
 
+    localStorage.setItem('authToken', token);
+
     const responseProfile = await authAPI.getProfile(token);
     if (responseProfile.data) { console.log(responseProfile.data); }
 
-    localStorage.setItem('authToken', token);
     localStorage.setItem('userData', JSON.stringify(responseProfile.data));
     setUser(user);
 

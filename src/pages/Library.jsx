@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { apostilaAPI } from '../services/api';
 import CriarApostila from '../components/NewApostilaButton';
 
 const Library = () => {
@@ -43,14 +44,18 @@ const Library = () => {
     if (apostila.is_generating) return;
 
     try {
-      const { data, error } = await supabase
-        .from('files')
-        .select('file')
-        .eq('id', apostila.id)
-        .single();
+      var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
+      console.log(data.file.length);
+      if (data.file.length === 0) {
+        var { data, error } = await supabase
+          .from('files')
+          .select('file')
+          .eq('id', apostila.id)
+          .single();
+        console.log('Fallback to Supabase file fetch');
+      }
 
       if (error) throw error;
-
       navigate('/apostila', {
         state: { htmlText: data.file }
       });
@@ -58,6 +63,30 @@ const Library = () => {
       console.error('Erro ao carregar apostila:', err);
     }
   };
+
+  const handleEditApostila = async (apostila) => {
+    if (apostila.is_generating) return;
+
+    try {
+      var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
+
+      if (data.file.length === 0) {
+        var { data, error } = await supabase
+          .from('files')
+          .select('file')
+          .eq('id', apostila.id)
+          .single();
+        console.log('Fallback to Supabase file fetch');
+      }
+
+      if (error) throw error;
+      navigate('/edit', {
+        state: { htmlText: data.file, id: apostila.id }
+      });
+    } catch (err) {
+      console.error('Erro ao carregar apostila:', err);
+    }
+  }
 
   const filteredApostilas = apostilasDb.filter(apostila => {
     const title = (apostila.file?.title || '').toLowerCase();
@@ -177,6 +206,13 @@ const Library = () => {
                   onClick={() => handleViewApostila(apostila)}
                 >
                   Ver Apostila Completa
+                </button>
+                <button
+                  className="w-full mt-3 rounded py-2 px-4 bg-green-600 text-white hover:bg-green-500 transition"
+                  disabled={disabled}
+                  onClick={() => handleEditApostila(apostila)}
+                >
+                  Editar Apostila
                 </button>
               </div>
             );
