@@ -51,7 +51,7 @@ export default function CreateApostila() {
     } catch (error) {
       console.error('Erro ao criar apostila:', error);
     } finally {
-      navigate('/loading');
+      navigate('/library');
     }
   };
 
