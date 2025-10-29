@@ -36,9 +36,31 @@ export const authAPI = {
   getProfile: (token) =>
     api.get('/me', {
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
       },
     }),
 };
+
+export const apostilaAPI = {
+  createApostila: (data) => api.post('/apostilas', {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
+    }, data
+  }),
+  updateEditedApostila: (id, file) => api.put('/apostilas/edit', {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
+    }, data: { id, file }
+  }),
+  getEditedApostila: (id) => api.get('/apostilas/edited_html', {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
+    },
+    params: { id }
+  }),
+}
 
 export default api;

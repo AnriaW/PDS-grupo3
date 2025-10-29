@@ -11,6 +11,7 @@ import Library from './pages/Library';
 import Profile from './pages/Profile';
 import Guide from './pages/Guide';
 import Apostila from './pages/Apostila';
+import EditApostila from './pages/EditApostila';
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
     path: '/apostila',
     element: <Apostila />,
   },
+  {
+    path: '/edit',
+    element: <EditApostila />,
+  }
 
 ]);
 
