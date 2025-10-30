@@ -2,36 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from "../components/Footer";
+import { supabase } from '../supabase';
 
 const Profile = () => {
   const [user, setUser] = useState({
-    name: 'João Silva',
-    email: 'joao.silva@email.com',
+    name: '',
+    email: '',
     photo: null,
-    level: 'Intermediário',
-    memberSince: '2024-01-01'
+    created_at: new Date().toISOString()
   });
 
   const [editMode, setEditMode] = useState(false);
-  const [tempName, setTempName] = useState(user.name);
-  const [tempEmail, setTempEmail] = useState(user.email);
+  const [tempName, setTempName] = useState('');
+  const [tempEmail, setTempEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [stats, setStats] = useState({
+    apostilasCriadas: 0,
+    tempoPlataforma: '',
+    nivel: 'Iniciante'
+  });
+  const [loadingStats, setLoadingStats] = useState(true);
 
-  // Buscar dados do localStorage quando o componente montar
+  // Buscar dados do usuário e estatísticas
   useEffect(() => {
-    const loadUserData = () => {
-      const savedUser = localStorage.getItem('userData');
-      if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        setUser(userData);
-        setTempName(userData.name);
-        setTempEmail(userData.email);
+    const loadUserData = async () => {
+      try {
+        const savedUser = localStorage.getItem('userData');
+        if (savedUser) {
+          const userData = JSON.parse(savedUser);
+          setUser(userData);
+          setTempName(userData.name);
+          setTempEmail(userData.email);
+          
+          // Buscar estatísticas do usuário
+          await fetchUserStats(userData.email);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error);
       }
     };
 
     loadUserData();
-
-    // Também ouvir eventos de atualização (caso outra aba/componente atualize)
     window.addEventListener('userDataUpdated', loadUserData);
 
     return () => {
@@ -39,11 +50,79 @@ const Profile = () => {
     };
   }, []);
 
-  const handleSave = () => {
+  const fetchUserStats = async (userEmail) => {
+    setLoadingStats(true);
+    try {
+      // Buscar número de apostilas criadas
+      const { data: apostilasData, error: apostilasError } = await supabase
+        .from('files')
+        .select('id, created_at')
+        .eq('email', userEmail);
+
+      if (apostilasError) throw apostilasError;
+
+      // Calcular tempo na plataforma
+      const tempoPlataforma = calcularTempoPlataforma(user.created_at);
+      
+      // Calcular nível baseado no número de apostilas
+      const nivel = calcularNivel(apostilasData?.length || 0);
+
+      setStats({
+        apostilasCriadas: apostilasData?.length || 0,
+        tempoPlataforma,
+        nivel
+      });
+
+    } catch (error) {
+      console.error('Erro ao buscar estatísticas:', error);
+      setStats({
+        apostilasCriadas: 0,
+        tempoPlataforma: 'Recém-chegado',
+        nivel: 'Iniciante'
+      });
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
+  const calcularTempoPlataforma = (dataCriacao) => {
+    const criacao = new Date(dataCriacao);
+    const agora = new Date();
+    const diffMeses = (agora.getFullYear() - criacao.getFullYear()) * 12 + 
+                     (agora.getMonth() - criacao.getMonth());
+    
+    if (diffMeses === 0) {
+      const diffDias = Math.floor((agora - criacao) / (1000 * 60 * 60 * 24));
+      return diffDias <= 1 ? 'Hoje' : `${diffDias} dias`;
+    } else if (diffMeses === 1) {
+      return '1 mês';
+    } else if (diffMeses < 12) {
+      return `${diffMeses} meses`;
+    } else {
+      const anos = Math.floor(diffMeses / 12);
+      return anos === 1 ? '1 ano' : `${anos} anos`;
+    }
+  };
+
+  const calcularNivel = (numeroApostilas) => {
+    if (numeroApostilas === 0) return 'Iniciante';
+    if (numeroApostilas <= 5) return 'Explorador';
+    if (numeroApostilas <= 15) return 'Criador';
+    if (numeroApostilas <= 30) return 'Mestre';
+    return 'Lenda';
+  };
+
+  const handleSave = async () => {
     setIsLoading(true);
 
-    // Simula uma requisição API
-    setTimeout(() => {
+    try {
+      // Atualizar no Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.updateUser({
+        data: { name: tempName }
+      });
+
+      if (authError) throw authError;
+
       const updatedUser = {
         ...user,
         name: tempName,
@@ -53,18 +132,22 @@ const Profile = () => {
 
       setUser(updatedUser);
       setEditMode(false);
-      setIsLoading(false);
 
       // Salva no localStorage
       localStorage.setItem('userData', JSON.stringify(updatedUser));
 
-      // Dispara um evento customizado para atualizar o Header e outros componentes
+      // Dispara evento para atualizar outros componentes
       window.dispatchEvent(new Event('userDataUpdated'));
-    }, 1000);
+
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      alert('Erro ao atualizar perfil. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    // Restaura os valores originais do usuário atual
     setTempName(user.name);
     setTempEmail(user.email);
     setEditMode(false);
@@ -89,10 +172,10 @@ const Profile = () => {
     }
   };
 
-  const stats = [
-    { label: 'Apostilas Criadas', value: '12' },
-    { label: 'Tempo na Plataforma', value: '3 meses' },
-    { label: 'Nível', value: user.level }
+  const estatisticas = [
+    { label: 'Apostilas Criadas', value: loadingStats ? '...' : stats.apostilasCriadas.toString() },
+    { label: 'Tempo na Plataforma', value: loadingStats ? '...' : stats.tempoPlataforma },
+    { label: 'Nível', value: loadingStats ? '...' : stats.nivel }
   ];
 
   return (
@@ -121,7 +204,7 @@ const Profile = () => {
                     className="w-20 h-20 rounded-full object-cover"
                   />
                 ) : (
-                  user.name.charAt(0)
+                  user.name ? user.name.charAt(0).toUpperCase() : 'U'
                 )}
               </div>
 
@@ -156,11 +239,15 @@ const Profile = () => {
                     onChange={(e) => setTempEmail(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Seu email"
+                    disabled // Email geralmente não pode ser alterado facilmente
                   />
+                  <p className="text-xs text-gray-500">O email não pode ser alterado</p>
                 </div>
               ) : (
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">{user.name}</h2>
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    {user.name || 'Usuário'}
+                  </h2>
                   <p className="text-gray-600">{user.email}</p>
                   <p className="text-sm text-gray-500">
                     Membro desde {new Date(user.created_at).toLocaleDateString('pt-BR')}
@@ -172,9 +259,15 @@ const Profile = () => {
 
           {/* Estatísticas */}
           <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-            {stats.map((stat, index) => (
+            {estatisticas.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-lg font-semibold text-gray-900">{stat.value}</div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {loadingStats ? (
+                    <div className="h-6 bg-gray-200 rounded animate-pulse mx-auto w-12"></div>
+                  ) : (
+                    stat.value
+                  )}
+                </div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
               </div>
             ))}
@@ -225,10 +318,13 @@ const Profile = () => {
               </label>
             </div>
 
-            <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+            <Link 
+              to="/change-password"
+              className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition block"
+            >
               <p className="font-medium text-gray-700">Alterar Senha</p>
               <p className="text-sm text-gray-500">Atualize sua senha de acesso</p>
-            </button>
+            </Link>
 
             <button className="w-full text-left p-3 border border-red-200 rounded-lg hover:bg-red-50 transition">
               <p className="font-medium text-red-500">Excluir conta</p>
