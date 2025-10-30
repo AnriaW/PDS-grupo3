@@ -29,8 +29,8 @@ const ChangePassword = () => {
       return false;
     }
 
-    if (formData.newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'A nova senha deve ter pelo menos 6 caracteres' });
+    if (formData.newPassword.length < 8) {
+      setMessage({ type: 'error', text: 'A nova senha deve ter pelo menos 8 caracteres' });
       return false;
     }
 
@@ -170,7 +170,7 @@ const ChangePassword = () => {
                 disabled={isLoading}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Mínimo de 6 caracteres
+                Mínimo de 8 caracteres
               </p>
             </div>
 
@@ -225,7 +225,7 @@ const ChangePassword = () => {
         <div className="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-200">
           <h3 className="font-medium text-blue-800 mb-2">💡 Dicas de Segurança</h3>
           <ul className="text-sm text-blue-700 space-y-1">
-            <li>• Use uma senha com pelo menos 6 caracteres</li>
+            <li>• Use uma senha com pelo menos 8 caracteres</li>
             <li>• Combine letras, números e símbolos</li>
             <li>• Não use senhas que você usa em outros sites</li>
           </ul>
