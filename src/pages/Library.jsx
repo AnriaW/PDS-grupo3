@@ -88,6 +88,42 @@ const Library = () => {
     }
   }
 
+  const handlePdfGeneration = async (apostila) => {
+    if (apostila.is_generating) return;
+
+    try {
+      var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
+      console.log(data.file.length);
+      if (data.file.length === 0) {
+        var { data, error } = await supabase
+          .from('files')
+          .select('file')
+          .eq('id', apostila.id)
+          .single();
+        console.log('Fallback to Supabase file fetch');
+      }
+
+      const response = await apostilaAPI.generatePdf(data.file);
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      console.log(response.data.length);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${apostila.titulo || 'apostila'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+      console.error('Erro ao gerar ou baixar PDF:', err);
+    }
+  };
+
   const filteredApostilas = apostilasDb.filter(apostila => {
     const title = (apostila.file?.title || '').toLowerCase();
     const desc = (apostila.file?.descricao || '').toLowerCase();
@@ -207,13 +243,22 @@ const Library = () => {
                 >
                   Ver Apostila Completa
                 </button>
-                <button
-                  className="w-full mt-3 rounded py-2 px-4 bg-green-600 text-white hover:bg-green-500 transition"
-                  disabled={disabled}
-                  onClick={() => handleEditApostila(apostila)}
-                >
-                  Editar Apostila
-                </button>
+                <div className="mt-4 flex flex-row gap-2 border-t border-gray-100 pt-4">
+                  <button
+                    className="flex-1 rounded py-2 px-4 bg-green-600 text-white hover:bg-green-500 transition disabled:bg-gray-300 disabled:text-gray-600"
+                    disabled={disabled}
+                    onClick={() => handleEditApostila(apostila)}
+                  >
+                    Editar Apostila
+                  </button>
+                  <button
+                    className="flex-1 rounded py-2 px-4 bg-purple-600 text-white hover:bg-purple-500 transition disabled:bg-gray-300 disabled:text-gray-600"
+                    disabled={disabled}
+                    onClick={() => handlePdfGeneration(apostila)}
+                  >
+                    Gerar PDF
+                  </button>
+                </div>
               </div>
             );
           })}
