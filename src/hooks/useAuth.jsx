@@ -13,6 +13,7 @@ export const useAuth = () => {
         id: 'dev-001',
         name: 'Dev User',
         email: 'dev@email.com',
+        password: 'senha123',
       };
       localStorage.setItem('authToken', 'mock-token');
       localStorage.setItem('userData', JSON.stringify(mockUser));

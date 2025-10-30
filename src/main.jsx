@@ -13,6 +13,9 @@ import Guide from './pages/Guide';
 import Apostila from './pages/Apostila';
 import EditApostila from './pages/EditApostila';
 import ChangePassword from './pages/ChangePassword';
+import DeleteAccount from './pages/DeleteAccount';
+import RecoverAccount from './pages/RecoverAccount';
+import ResetPassword from './pages/ResetPassword';
 
 const router = createBrowserRouter([
   {
@@ -66,6 +69,21 @@ const router = createBrowserRouter([
   {
     path: '/change-password',
     element: <ChangePassword />,
+  },
+
+  {
+    path: '/delete-account',
+    element: <DeleteAccount />,
+  },
+
+  {
+    path: '/recover-account',
+    element: <RecoverAccount />,
+  },
+
+  {
+    path: '/reset-password',
+    element: <ResetPassword />,
   }
 
 ]);

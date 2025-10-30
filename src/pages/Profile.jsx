@@ -85,24 +85,55 @@ const Profile = () => {
     }
   };
 
-  const calcularTempoPlataforma = (dataCriacao) => {
-    const criacao = new Date(dataCriacao);
-    const agora = new Date();
-    const diffMeses = (agora.getFullYear() - criacao.getFullYear()) * 12 + 
-                     (agora.getMonth() - criacao.getMonth());
+const calcularTempoPlataforma = (dataCriacao) => {
+  const criacao = new Date(dataCriacao);
+  const agora = new Date();
+  
+  // Calcula a diferença em milissegundos
+  const diffMs = agora - criacao;
+  
+  // Converte para dias
+  const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  // Calcula meses e anos de forma mais precisa
+  const anos = agora.getFullYear() - criacao.getFullYear();
+  const meses = agora.getMonth() - criacao.getMonth();
+  const totalMeses = anos * 12 + meses;
+  
+  // Ajusta se o dia do mês atual é anterior ao dia de criação
+  const diasNoMes = agora.getDate() < criacao.getDate() ? -1 : 0;
+  const mesesCorrigidos = totalMeses + diasNoMes;
+  
+  if (diffDias === 0) {
+    return 'Hoje';
+  } else if (diffDias === 1) {
+    return '1 dia';
+  } else if (diffDias < 7) {
+    return `${diffDias} dias`;
+  } else if (diffDias < 30) {
+    const semanas = Math.floor(diffDias / 7);
+    return semanas === 1 ? '1 semana' : `${semanas} semanas`;
+  } else if (mesesCorrigidos === 1) {
+    return '1 mês';
+  } else if (mesesCorrigidos < 12) {
+    return `${mesesCorrigidos} meses`;
+  } else {
+    // Calcula anos completos
+    let anosCompletos = anos;
     
-    if (diffMeses === 0) {
-      const diffDias = Math.floor((agora - criacao) / (1000 * 60 * 60 * 24));
-      return diffDias <= 1 ? 'Hoje' : `${diffDias} dias`;
-    } else if (diffMeses === 1) {
-      return '1 mês';
-    } else if (diffMeses < 12) {
-      return `${diffMeses} meses`;
-    } else {
-      const anos = Math.floor(diffMeses / 12);
-      return anos === 1 ? '1 ano' : `${anos} anos`;
+    // Ajusta se ainda não completou o aniversário este ano
+    if (agora.getMonth() < criacao.getMonth() || 
+        (agora.getMonth() === criacao.getMonth() && agora.getDate() < criacao.getDate())) {
+      anosCompletos--;
     }
-  };
+    
+    if (anosCompletos === 1) {
+      return '1 ano';
+    } else {
+      return `${anosCompletos} anos`;
+    }
+  }
+};
 
   const calcularNivel = (numeroApostilas) => {
     if (numeroApostilas === 0) return 'Iniciante';
@@ -318,18 +349,19 @@ const Profile = () => {
               </label>
             </div>
 
-            <Link 
-              to="/change-password"
+            <Link to="/change-password"
               className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition block"
             >
               <p className="font-medium text-gray-700">Alterar Senha</p>
               <p className="text-sm text-gray-500">Atualize sua senha de acesso</p>
             </Link>
 
-            <button className="w-full text-left p-3 border border-red-200 rounded-lg hover:bg-red-50 transition">
+            <Link to="delete-account" 
+              className="w-full text-left p-3 border border-red-200 rounded-lg hover:bg-red-50 transition"
+            >
               <p className="font-medium text-red-500">Excluir conta</p>
               <p className="text-sm text-red-600">Excluir conta permanentemente</p>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

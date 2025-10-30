@@ -149,9 +149,9 @@ const Login = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link to="/recover-account" className="font-medium text-blue-600 hover:text-blue-500">
                   Esqueceu sua senha?
-                </a>
+                </Link>
               </div>
             </div>
 

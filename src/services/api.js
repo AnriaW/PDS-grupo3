@@ -41,6 +41,10 @@ export const authAPI = {
     }),
 };
 
+export const userAPI = {  
+  deleteAccount: () => api.delete('/auth/account'),
+};
+
 export const apostilaAPI = {
   createApostila: (data) => api.post('/apostilas', {
     headers: {
