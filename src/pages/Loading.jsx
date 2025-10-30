@@ -41,7 +41,7 @@ const Loading = () => {
         {/* Descrição */}
         <p className="text-gray-600 mb-8 text-lg">
           Nossa IA está criando conteúdo personalizado para você.
-          Isso leva aproximadamente 3 minutos.
+          Isso leva aproximadamente 3 minutos. Mas, ocasionalmente, pode levar um pouco mais.
         </p>
 
         {/* Barra de progresso */}
@@ -66,7 +66,7 @@ const Loading = () => {
           {progress >= 25 && progress < 50 && "Gerando conteúdo..."}
           {progress >= 50 && progress < 75 && "Formatando apostila..."}
           {progress >= 75 && progress < 100 && "Finalizando..."}
-          {progress >= 100 && "Pronto! Redirecionando..."}
+          {progress >= 100 && "Redirecionando..."}
         </div>
       </div>
     </div>
