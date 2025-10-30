@@ -61,6 +61,16 @@ export const apostilaAPI = {
     },
     params: { id }
   }),
+  generatePdf: (html) => api.post('/apostilas/render_pdf', {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
+    }, data: { html }
+  },
+    {
+      responseType: 'blob',
+    }
+  ),
 }
 
 export default api;
