@@ -12,6 +12,7 @@ const Library = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [apostilasDb, setApostilasDb] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null); // Controla qual dropdown está aberto
 
   useEffect(() => {
     const fetchApostilas = async () => {
@@ -40,8 +41,13 @@ const Library = () => {
     fetchApostilas();
   }, []);
 
+  const toggleDropdown = (apostilaId) => {
+    setOpenDropdown(openDropdown === apostilaId ? null : apostilaId);
+  };
+
   const handleViewApostila = async (apostila) => {
     if (apostila.is_generating) return;
+    setOpenDropdown(null);
 
     try {
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
@@ -66,6 +72,7 @@ const Library = () => {
 
   const handleEditApostila = async (apostila) => {
     if (apostila.is_generating) return;
+    setOpenDropdown(null);
 
     try {
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
@@ -90,6 +97,7 @@ const Library = () => {
 
   const handlePdfGeneration = async (apostila) => {
     if (apostila.is_generating) return;
+    setOpenDropdown(null);
 
     try {
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
@@ -121,6 +129,27 @@ const Library = () => {
 
     } catch (err) {
       console.error('Erro ao gerar ou baixar PDF:', err);
+    }
+  };
+
+  const handleDeleteApostila = async (apostila) => {
+    if (apostila.is_generating) return;
+    setOpenDropdown(null);
+
+    if (!window.confirm(`Tem certeza que deseja excluir a apostila "${apostila.titulo || 'Sem título'}"?`)) {
+      return;
+    }
+
+    try {
+      // Aqui você precisaria adicionar a função para deletar no seu backend
+      // await apostilaAPI.deleteApostila(apostila.id);
+      
+      // Por enquanto, vamos apenas remover do estado local
+      setApostilasDb(apostilasDb.filter(a => a.id !== apostila.id));
+      
+      console.log('Apostila excluída:', apostila.id);
+    } catch (err) {
+      console.error('Erro ao excluir apostila:', err);
     }
   };
 
@@ -223,8 +252,66 @@ const Library = () => {
             const descricao = apostila.file?.descricao || '';
             const disabled = !!apostila.is_generating;
             return (
-              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md cursor-pointer'}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">{title}</h3>
+              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md'}`}>
+                {/* Cabeçalho com título e menu dropdown */}
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="text-lg font-semibold text-gray-800 flex-1 pr-2">{title}</h3>
+                  
+                  {/* Menu Dropdown */}
+                  <div className="relative">
+                    <button
+                      onClick={() => toggleDropdown(apostila.id)}
+                      disabled={disabled}
+                      className="p-1 rounded hover:bg-gray-100 transition disabled:opacity-50"
+                    >
+                      <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                      </svg>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {openDropdown === apostila.id && (
+                      <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                        <div className="py-1">
+                          <button
+                            onClick={() => handleEditApostila(apostila)}
+                            disabled={disabled}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Editar
+                          </button>
+                          
+                          <button
+                            onClick={() => handlePdfGeneration(apostila)}
+                            disabled={disabled}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            Gerar PDF
+                          </button>
+                          
+                          <button
+                            onClick={() => handleDeleteApostila(apostila)}
+                            disabled={disabled}
+                            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Informações da apostila */}
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   <div className="flex justify-between">
                     <span>Data:</span>
@@ -232,10 +319,15 @@ const Library = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Status:</span>
-                    <span className={`font-medium ${disabled ? 'text-yellow-600' : 'text-green-700'}`}>{disabled ? 'Gerando...' : 'Pronto'}</span>
+                    <span className={`font-medium ${disabled ? 'text-yellow-600' : 'text-green-700'}`}>
+                      {disabled ? 'Gerando...' : 'Pronto'}
+                    </span>
                   </div>
                 </div>
+                
                 <p className="text-sm text-gray-500 mb-4 line-clamp-3">{descricao}</p>
+                
+                {/* Botão principal - Ver Apostila Completa */}
                 <button
                   className={`w-full rounded py-2 px-4 transition ${disabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
                   disabled={disabled}
@@ -243,22 +335,6 @@ const Library = () => {
                 >
                   Ver Apostila Completa
                 </button>
-                <div className="mt-4 flex flex-row gap-2 border-t border-gray-100 pt-4">
-                  <button
-                    className="flex-1 rounded py-2 px-4 bg-green-600 text-white hover:bg-green-500 transition disabled:bg-gray-300 disabled:text-gray-600"
-                    disabled={disabled}
-                    onClick={() => handleEditApostila(apostila)}
-                  >
-                    Editar Apostila
-                  </button>
-                  <button
-                    className="flex-1 rounded py-2 px-4 bg-purple-600 text-white hover:bg-purple-500 transition disabled:bg-gray-300 disabled:text-gray-600"
-                    disabled={disabled}
-                    onClick={() => handlePdfGeneration(apostila)}
-                  >
-                    Gerar PDF
-                  </button>
-                </div>
               </div>
             );
           })}

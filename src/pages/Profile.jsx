@@ -356,8 +356,8 @@ const calcularTempoPlataforma = (dataCriacao) => {
               <p className="text-sm text-gray-500">Atualize sua senha de acesso</p>
             </Link>
 
-            <Link to="delete-account" 
-              className="w-full text-left p-3 border border-red-200 rounded-lg hover:bg-red-50 transition"
+            <Link to="/delete-account" 
+              className="w-full text-left p-3 border border-red-200 rounded-lg hover:bg-red-50 transition block"
             >
               <p className="font-medium text-red-500">Excluir conta</p>
               <p className="text-sm text-red-600">Excluir conta permanentemente</p>
