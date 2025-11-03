@@ -12,11 +12,97 @@ const Library = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [apostilasDb, setApostilasDb] = useState([]);
-  const [openDropdown, setOpenDropdown] = useState(null); // Controla qual dropdown está aberto
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(null); // Controla qual PDF está sendo baixado
+
+  // Dados simulados de apostilas
+  const apostilasSimuladas = [
+    {
+      id: 1,
+      titulo: 'Introdução à Álgebra Linear',
+      file: {
+        title: 'Introdução à Álgebra Linear',
+        descricao: 'Conceitos básicos de vetores, matrizes e sistemas lineares para iniciantes em matemática avançada.',
+        materia: 'Matemática',
+        conteudo: '<h1>Introdução à Álgebra Linear</h1><p>Conceitos fundamentais...</p>'
+      },
+      created_at: '2024-01-15T10:30:00Z',
+      is_generating: false,
+      email: 'usuario@exemplo.com'
+    },
+    {
+      id: 2,
+      titulo: 'Revolução Francesa',
+      file: {
+        title: 'Revolução Francesa',
+        descricao: 'Análise completa do período revolucionário francês, suas causas e consequências para a Europa.',
+        materia: 'História',
+        conteudo: '<h1>Revolução Francesa</h1><p>Contexto histórico...</p>'
+      },
+      created_at: '2024-01-10T14:20:00Z',
+      is_generating: false,
+      email: 'usuario@exemplo.com'
+    },
+    {
+      id: 3,
+      titulo: 'Fotossíntese e Respiração',
+      file: {
+        title: 'Fotossíntese e Respiração',
+        descricao: 'Processos bioquímicos fundamentais para a vida vegetal e suas interações com o ecossistema.',
+        materia: 'Biologia',
+        conteudo: '<h1>Fotossíntese</h1><p>Processo de conversão de energia...</p>'
+      },
+      created_at: '2024-01-08T09:15:00Z',
+      is_generating: true, // Esta está em processamento
+      email: 'usuario@exemplo.com'
+    }
+  ];
 
   useEffect(() => {
-    const fetchApostilas = async () => {
-      setLoading(true);
+    fetchApostilas();
+    
+    // Configura refresh automático a cada 10 segundos para apostilas em geração
+    const interval = setInterval(() => {
+      refreshGeneratingApostilas();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchApostilas = async () => {
+    setLoading(true);
+    try {
+      const userData = localStorage.getItem("userData");
+      const rawEmail = JSON.parse(userData)?.email;
+      const email = rawEmail ? decodeURIComponent(rawEmail) : 'apostilabic@gmail.com';
+
+      const { data, error } = await supabase
+        .from('files')
+        .select('*')
+        .eq('email', email)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      if (Array.isArray(data) && data.length > 0) {
+        setApostilasDb(data);
+      } else {
+        setApostilasDb(apostilasSimuladas);
+        console.log('Usando apostilas simuladas para demonstração');
+      }
+    } catch (err) {
+      console.error('Erro ao buscar apostilas, usando dados simulados:', err);
+      setApostilasDb(apostilasSimuladas);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshGeneratingApostilas = async () => {
+    // Verifica se há apostilas em geração
+    const generatingApostilas = apostilasDb.filter(apostila => apostila.is_generating);
+    
+    if (generatingApostilas.length > 0) {
       try {
         const userData = localStorage.getItem("userData");
         const rawEmail = JSON.parse(userData)?.email;
@@ -26,24 +112,38 @@ const Library = () => {
           .from('files')
           .select('*')
           .eq('email', email)
-          .order('created_at', { ascending: false });
+          .in('id', generatingApostilas.map(a => a.id));
 
-        if (error) throw error;
-        setApostilasDb(Array.isArray(data) ? data : []);
+        if (!error && data) {
+          // Atualiza apenas as apostilas que mudaram de status
+          setApostilasDb(prevApostilas => 
+            prevApostilas.map(apostila => {
+              const updatedApostila = data.find(a => a.id === apostila.id);
+              return updatedApostila ? { ...apostila, ...updatedApostila } : apostila;
+            })
+          );
+        }
       } catch (err) {
-        console.error('Erro ao buscar apostilas:', err);
-        setApostilasDb([]);
-      } finally {
-        setLoading(false);
+        console.error('Erro ao atualizar status das apostilas:', err);
       }
-    };
-
-    fetchApostilas();
-  }, []);
+    }
+  };
 
   const toggleDropdown = (apostilaId) => {
     setOpenDropdown(openDropdown === apostilaId ? null : apostilaId);
   };
+
+  // Fecha o dropdown quando clica fora
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenDropdown(null);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   const handleViewApostila = async (apostila) => {
     if (apostila.is_generating) return;
@@ -98,8 +198,12 @@ const Library = () => {
   const handlePdfGeneration = async (apostila) => {
     if (apostila.is_generating) return;
     setOpenDropdown(null);
+    setDownloadingPdf(apostila.id);
 
     try {
+      // Simula o tempo de download
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
       console.log(data.file.length);
       if (data.file.length === 0) {
@@ -129,6 +233,9 @@ const Library = () => {
 
     } catch (err) {
       console.error('Erro ao gerar ou baixar PDF:', err);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    } finally {
+      setDownloadingPdf(null);
     }
   };
 
@@ -153,24 +260,35 @@ const Library = () => {
     }
   };
 
+  const getApostilaStatus = (apostila) => {
+    if (downloadingPdf === apostila.id) {
+      return { text: '📥 Baixando...', color: 'text-blue-600' };
+    }
+    if (apostila.is_generating) {
+      return { text: '🔄 Gerando...', color: 'text-yellow-600' };
+    }
+    return { text: '✅ Pronto', color: 'text-green-700' };
+  };
+
   const filteredApostilas = apostilasDb.filter(apostila => {
-    const title = (apostila.file?.title || '').toLowerCase();
+    const title = (apostila.titulo || apostila.file?.title || '').toLowerCase();
     const desc = (apostila.file?.descricao || '').toLowerCase();
+    const materia = (apostila.file?.materia || '').toLowerCase();
     const term = searchTerm.toLowerCase();
-    return title.includes(term) || desc.includes(term);
+    
+    return title.includes(term) || desc.includes(term) || materia.includes(term);
   });
 
   const sortedApostilas = [...filteredApostilas].sort((a, b) => {
     if (sortBy === 'recent') {
       return new Date(b.created_at) - new Date(a.created_at);
     } else {
-      const at = (a.file?.title || '').toString();
-      const bt = (b.file?.title || '').toString();
+      const at = (a.titulo || a.file?.title || '').toString();
+      const bt = (b.titulo || b.file?.title || '').toString();
       return at.localeCompare(bt);
     }
   });
 
-  // View principal da biblioteca
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -192,7 +310,7 @@ const Library = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Buscar por título, autor ou descrição..."
+                  placeholder="Buscar por título, matéria ou descrição..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -247,20 +365,32 @@ const Library = () => {
               </div>
             ))
           )}
+          
           {!loading && sortedApostilas.map((apostila) => {
-            const title = apostila.titulo || 'Capítulo';
-            const descricao = apostila.file?.descricao || '';
-            const disabled = !!apostila.is_generating;
+            const title = apostila.titulo || apostila.file?.title || 'Apostila Sem Título';
+            const descricao = apostila.file?.descricao || 'Descrição não disponível';
+            const materia = apostila.file?.materia || 'Geral';
+            const disabled = !!apostila.is_generating || downloadingPdf === apostila.id;
+            const status = getApostilaStatus(apostila);
+            
             return (
-              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md'}`}>
+              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60' : 'hover:shadow-md'}`}>
                 {/* Cabeçalho com título e menu dropdown */}
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-lg font-semibold text-gray-800 flex-1 pr-2">{title}</h3>
+                  <div className="flex-1 pr-2">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
+                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                      {materia}
+                    </span>
+                  </div>
                   
                   {/* Menu Dropdown */}
                   <div className="relative">
                     <button
-                      onClick={() => toggleDropdown(apostila.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDropdown(apostila.id);
+                      }}
                       disabled={disabled}
                       className="p-1 rounded hover:bg-gray-100 transition disabled:opacity-50"
                     >
@@ -274,7 +404,10 @@ const Library = () => {
                       <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                         <div className="py-1">
                           <button
-                            onClick={() => handleEditApostila(apostila)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditApostila(apostila);
+                            }}
                             disabled={disabled}
                             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
                           >
@@ -285,7 +418,10 @@ const Library = () => {
                           </button>
                           
                           <button
-                            onClick={() => handlePdfGeneration(apostila)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePdfGeneration(apostila);
+                            }}
                             disabled={disabled}
                             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
                           >
@@ -296,7 +432,10 @@ const Library = () => {
                           </button>
                           
                           <button
-                            onClick={() => handleDeleteApostila(apostila)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteApostila(apostila);
+                            }}
                             disabled={disabled}
                             className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                           >
@@ -319,8 +458,8 @@ const Library = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Status:</span>
-                    <span className={`font-medium ${disabled ? 'text-yellow-600' : 'text-green-700'}`}>
-                      {disabled ? 'Gerando...' : 'Pronto'}
+                    <span className={`font-medium ${status.color}`}>
+                      {status.text}
                     </span>
                   </div>
                 </div>
@@ -333,7 +472,7 @@ const Library = () => {
                   disabled={disabled}
                   onClick={() => handleViewApostila(apostila)}
                 >
-                  Ver Apostila Completa
+                  {disabled ? 'Aguarde...' : 'Ver Apostila Completa'}
                 </button>
               </div>
             );
@@ -341,14 +480,15 @@ const Library = () => {
         </div>
 
         {/* Mensagem se não houver apostilas */}
-        {sortedApostilas.length === 0 && (
+        {!loading && sortedApostilas.length === 0 && (
           <div className="text-center py-12">
             <div className="bg-gray-50 rounded-lg p-8 border border-gray-200">
               <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
               </svg>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Nenhuma apostila encontrada</h3>
-              <div className="my-6"><CriarApostila></CriarApostila></div>
+              <p className="text-gray-600 mb-4">Crie sua primeira apostila para começar</p>
+              <div className="my-6"><CriarApostila /></div>
             </div>
           </div>
         )}
