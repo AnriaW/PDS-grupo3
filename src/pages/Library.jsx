@@ -13,50 +13,7 @@ const Library = () => {
   const [loading, setLoading] = useState(false);
   const [apostilasDb, setApostilasDb] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [downloadingPdf, setDownloadingPdf] = useState(null); // Controla qual PDF está sendo baixado
-
-  // Dados simulados de apostilas
-  const apostilasSimuladas = [
-    {
-      id: 1,
-      titulo: 'Introdução à Álgebra Linear',
-      file: {
-        title: 'Introdução à Álgebra Linear',
-        descricao: 'Conceitos básicos de vetores, matrizes e sistemas lineares para iniciantes em matemática avançada.',
-        materia: 'Matemática',
-        conteudo: '<h1>Introdução à Álgebra Linear</h1><p>Conceitos fundamentais...</p>'
-      },
-      created_at: '2024-01-15T10:30:00Z',
-      is_generating: false,
-      email: 'usuario@exemplo.com'
-    },
-    {
-      id: 2,
-      titulo: 'Revolução Francesa',
-      file: {
-        title: 'Revolução Francesa',
-        descricao: 'Análise completa do período revolucionário francês, suas causas e consequências para a Europa.',
-        materia: 'História',
-        conteudo: '<h1>Revolução Francesa</h1><p>Contexto histórico...</p>'
-      },
-      created_at: '2024-01-10T14:20:00Z',
-      is_generating: false,
-      email: 'usuario@exemplo.com'
-    },
-    {
-      id: 3,
-      titulo: 'Fotossíntese e Respiração',
-      file: {
-        title: 'Fotossíntese e Respiração',
-        descricao: 'Processos bioquímicos fundamentais para a vida vegetal e suas interações com o ecossistema.',
-        materia: 'Biologia',
-        conteudo: '<h1>Fotossíntese</h1><p>Processo de conversão de energia...</p>'
-      },
-      created_at: '2024-01-08T09:15:00Z',
-      is_generating: true, // Esta está em processamento
-      email: 'usuario@exemplo.com'
-    }
-  ];
+  const [downloadingPdf, setDownloadingPdf] = useState(null);
 
   useEffect(() => {
     fetchApostilas();
@@ -83,16 +40,10 @@ const Library = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      if (Array.isArray(data) && data.length > 0) {
-        setApostilasDb(data);
-      } else {
-        setApostilasDb(apostilasSimuladas);
-        console.log('Usando apostilas simuladas para demonstração');
-      }
+      setApostilasDb(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Erro ao buscar apostilas, usando dados simulados:', err);
-      setApostilasDb(apostilasSimuladas);
+      console.error('Erro ao buscar apostilas:', err);
+      setApostilasDb([]);
     } finally {
       setLoading(false);
     }
@@ -273,10 +224,8 @@ const Library = () => {
   const filteredApostilas = apostilasDb.filter(apostila => {
     const title = (apostila.titulo || apostila.file?.title || '').toLowerCase();
     const desc = (apostila.file?.descricao || '').toLowerCase();
-    const materia = (apostila.file?.materia || '').toLowerCase();
     const term = searchTerm.toLowerCase();
-    
-    return title.includes(term) || desc.includes(term) || materia.includes(term);
+    return title.includes(term) || desc.includes(term);
   });
 
   const sortedApostilas = [...filteredApostilas].sort((a, b) => {
@@ -310,7 +259,7 @@ const Library = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Buscar por título, matéria ou descrição..."
+                  placeholder="Buscar por título, autor ou descrição..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -365,24 +314,17 @@ const Library = () => {
               </div>
             ))
           )}
-          
           {!loading && sortedApostilas.map((apostila) => {
-            const title = apostila.titulo || apostila.file?.title || 'Apostila Sem Título';
-            const descricao = apostila.file?.descricao || 'Descrição não disponível';
-            const materia = apostila.file?.materia || 'Geral';
+            const title = apostila.titulo || 'Capítulo';
+            const descricao = apostila.file?.descricao || '';
             const disabled = !!apostila.is_generating || downloadingPdf === apostila.id;
             const status = getApostilaStatus(apostila);
             
             return (
-              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60' : 'hover:shadow-md'}`}>
+              <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md'}`}>
                 {/* Cabeçalho com título e menu dropdown */}
                 <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1 pr-2">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
-                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                      {materia}
-                    </span>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800 flex-1 pr-2">{title}</h3>
                   
                   {/* Menu Dropdown */}
                   <div className="relative">
