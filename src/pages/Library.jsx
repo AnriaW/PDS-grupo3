@@ -199,7 +199,7 @@ const Library = () => {
     }
 
     try {
-      // Aqui você precisaria adicionar a função para deletar no seu backend
+      // Adicionar a função para deletar no backend
       // await apostilaAPI.deleteApostila(apostila.id);
       
       // Por enquanto, vamos apenas remover do estado local
