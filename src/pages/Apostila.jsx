@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useRef, useLayoutEffect, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
 import Header from '../components/Header';
@@ -9,8 +9,63 @@ export default function Apostila({ htmlText }) {
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isUpdatingShare, setIsUpdatingShare] = useState(false);
-  const html = htmlText ?? location.state?.htmlText ?? '';
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingSectionId, setEditingSectionId] = useState(null);
+  const [editingText, setEditingText] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [html, setHtml] = useState(htmlText ?? location.state?.htmlText ?? '');
   const apostilaRef = useRef(null);
+
+  // Verificação nativa: se tem apostilaId no state, o usuário é o criador
+  // (veio da biblioteca que já filtra por email do usuário)
+  const isCreator = !!apostilaId;
+
+  // Buscar HTML atualizado do Supabase sempre que a página carregar
+  useEffect(() => {
+    const fetchHtmlFromSupabase = async () => {
+      if (apostilaId) {
+        console.log('Buscando HTML atualizado do Supabase para ID:', apostilaId);
+        try {
+          const { data, error } = await supabase
+            .from('files')
+            .select('file')
+            .eq('id', apostilaId)
+            .single();
+          
+          if (error) {
+            console.error('Erro ao buscar do Supabase:', error);
+            // Se falhar, usa o HTML do location.state como fallback
+            if (location.state?.htmlText) {
+              setHtml(location.state.htmlText);
+            } else if (htmlText) {
+              setHtml(htmlText);
+            }
+          } else if (data?.file) {
+            console.log('HTML carregado do Supabase com sucesso! Tamanho:', data.file.length);
+            setHtml(data.file);
+          }
+        } catch (err) {
+          console.error('Erro ao buscar HTML:', err);
+          // Fallback para location.state
+          if (location.state?.htmlText) {
+            setHtml(location.state.htmlText);
+          } else if (htmlText) {
+            setHtml(htmlText);
+          }
+        }
+      } else {
+        // Se não tem ID (apostila compartilhada), usa o HTML passado por props
+        if (htmlText) {
+          setHtml(htmlText);
+        } else if (location.state?.htmlText) {
+          setHtml(location.state.htmlText);
+        }
+      }
+    };
+    
+    fetchHtmlFromSupabase();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apostilaId]); // Intencionalmente só depende do apostilaId para sempre buscar do Supabase
 
   useEffect(() => {
     if (html) {
@@ -52,6 +107,42 @@ export default function Apostila({ htmlText }) {
         apostilaRef.current.setAttribute('data-apostila-container', 'true');
         apostilaRef.current.innerHTML = bodyContent;
         
+        // Adicionar botões de edição se o usuário for o criador
+        if (isCreator) {
+          const ouvirButtons = apostilaRef.current.querySelectorAll('button.ouvir');
+          ouvirButtons.forEach((btn) => {
+            // Verificar se o botão de edição já existe
+            if (btn.parentElement?.classList.contains('buttons-wrapper')) return;
+            
+            const sectionId = btn.getAttribute('data-section');
+            
+            // Criar wrapper para os botões
+            const wrapper = document.createElement('div');
+            wrapper.className = 'buttons-wrapper';
+            
+            // Mover o botão ouvir para dentro do wrapper
+            const parent = btn.parentNode;
+            const nextSibling = btn.nextSibling;
+            wrapper.appendChild(btn);
+            
+            // Criar botão de editar com tamanho idêntico ao botão de som
+            const editBtn = document.createElement('button');
+            editBtn.className = 'editar';
+            editBtn.setAttribute('data-section', sectionId);
+            editBtn.setAttribute('aria-label', 'Editar seção');
+            editBtn.innerHTML = `
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem; display: block;">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="#0066cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="#0066cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `;
+            wrapper.appendChild(editBtn);
+            
+            // Inserir o wrapper no lugar do botão original
+            parent.insertBefore(wrapper, nextSibling);
+          });
+        }
+        
         // MODIFICAÇÕES EM TEMPO REAL NO DOM (APÓS INSERÇÃO)
         // 1. Imagem já é centralizada via CSS modificado
         const capaImg = apostilaRef.current.querySelector('.capa');
@@ -78,9 +169,138 @@ export default function Apostila({ htmlText }) {
         if (!apostilaRef.current.style.position) apostilaRef.current.style.position = 'relative';
       }
     }
-  }, [html]);
+  }, [html, isCreator]);
 
   const currentLink = `${window.location.origin}/apostila/${apostilaId}`;
+
+  // Função para extrair texto puro de HTML (sem tags) preservando quebras de linha
+  const extractPlainText = (htmlContent) => {
+    // Substituir tags que representam quebras de linha
+    let text = htmlContent
+      .replace(/<br\s*\/?>/gi, '\n')           // <br> vira \n
+      .replace(/<\/p>\s*<p[^>]*>/gi, '\n\n')   // Entre parágrafos: dupla quebra
+      .replace(/<p[^>]*>/gi, '')                // Remove abertura de <p>
+      .replace(/<\/p>/gi, '')                   // Remove fechamento de <p>
+      .replace(/<\/div>\s*<div[^>]*>/gi, '\n\n') // Entre divs: dupla quebra
+      .replace(/<div[^>]*>/gi, '')              // Remove <div>
+      .replace(/<\/div>/gi, '');                // Remove </div>
+    
+    // Remover outras tags HTML
+    const div = document.createElement('div');
+    div.innerHTML = text;
+    text = div.textContent || div.innerText || '';
+    
+    // Normalizar múltiplas quebras de linha seguidas
+    text = text.replace(/\n{3,}/g, '\n\n');
+    
+    // Remover espaços extras no início e fim de cada linha
+    text = text.split('\n').map(line => line.trim()).join('\n');
+    
+    // Remover espaços no início e fim do texto completo
+    return text.trim();
+  };
+
+  // Função para abrir o modal de edição
+  const openEditModal = useCallback((sectionId) => {
+    if (!apostilaRef.current) return;
+    
+    const section = apostilaRef.current.querySelector(`#${sectionId}`);
+    if (!section) return;
+    
+    // Extrair texto puro do HTML
+    const plainText = extractPlainText(section.innerHTML);
+    
+    setEditingSectionId(sectionId);
+    setEditingText(plainText);
+    setShowEditModal(true);
+  }, []);
+
+  // Função para salvar as alterações
+  const saveEdit = async () => {
+    if (!editingSectionId || !apostilaRef.current) return;
+    
+    setIsSaving(true);
+    try {
+      // Encontrar a seção no DOM
+      const section = apostilaRef.current.querySelector(`#${editingSectionId}`);
+      if (!section) {
+        alert('Seção não encontrada.');
+        return;
+      }
+
+      // Converter o texto simples de volta para HTML preservando quebras de linha
+      // Dividir em parágrafos (dupla quebra de linha ou mais)
+      const paragraphs = editingText
+        .split(/\n\s*\n/)
+        .filter(para => para.trim() !== '')
+        .map(para => {
+          // Dentro de cada parágrafo, converter quebras de linha simples em <br>
+          const lines = para.trim().split('\n').map(line => line.trim()).join('<br>');
+          return `<p>${lines}</p>`;
+        })
+        .join('\n');
+
+      // Atualizar o DOM localmente primeiro
+      section.innerHTML = paragraphs;
+
+      // Atualizar o HTML original usando replace em string para preservar exatamente a estrutura
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const sectionInDoc = doc.querySelector(`#${editingSectionId}`);
+      
+      if (!sectionInDoc) {
+        console.error('Seção não encontrada no HTML original!');
+        alert('Erro: Seção não encontrada no HTML original.');
+        return;
+      }
+      
+      const oldContent = sectionInDoc.innerHTML;
+      
+      // Substituir o conteúdo antigo pelo novo no HTML string
+      let updatedHtml = html.replace(oldContent, paragraphs);
+
+      // Salvar no Supabase (na coluna 'file')
+      const { error, data } = await supabase
+        .from('files')
+        .update({ 
+          file: updatedHtml
+        })
+        .eq('id', apostilaId)
+        .select();
+
+      if (error) {
+        console.error('Erro ao salvar no Supabase:', error);
+        alert('Erro ao salvar as alterações. Tente novamente.');
+        return;
+      }
+      
+      if (!data || data.length === 0) {
+        console.error('Nenhum dado retornado do Supabase');
+        alert('Erro: A apostila não foi encontrada ou você não tem permissão para editá-la.');
+        return;
+      }
+      
+      console.log('Salvo com sucesso no Supabase!');
+
+      // Atualizar o state local do HTML para que próximas edições funcionem
+      setHtml(updatedHtml);
+
+      // Fechar modal
+      setShowEditModal(false);
+      setEditingSectionId(null);
+      setEditingText('');
+      
+      alert('Alterações salvas com sucesso!');
+      
+      // Recarregar a página para buscar o HTML atualizado do Supabase
+      window.location.reload();
+    } catch (err) {
+      console.error('Erro ao salvar edição:', err);
+      alert('Erro ao salvar as alterações. Tente novamente.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const copyToClipboard = async () => {
     try {
@@ -133,22 +353,67 @@ export default function Apostila({ htmlText }) {
       const style = document.createElement('style');
       style.id = 'apostila-runtime-styles';
       style.textContent = `
-        .controls button, button.ouvir { 
-          display: inline-flex; align-items: center; gap: 0.25rem;
-          background: #e5e7eb; color: #111827; border: 1px solid #d1d5db; 
-          padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer;
+        .controls button, button.ouvir, button.editar { 
+          display: inline-flex !important; 
+          align-items: center !important; 
+          justify-content: center !important; 
+          gap: 0.25rem;
+          background: #e5e7eb !important; 
+          color: #111827; 
+          border: 1px solid #d1d5db !important; 
+          padding: 0.25rem 0.5rem !important; 
+          border-radius: 6px !important; 
+          cursor: pointer;
+          vertical-align: middle !important;
+          box-sizing: border-box !important;
         }
-        .controls button:hover, button.ouvir:hover { background: #dbe0e6; }
+        .controls button:hover, button.ouvir:hover, button.editar:hover { 
+          background: #dbe0e6 !important; 
+        }
+        
+        button.ouvir img, button.editar svg {
+          width: 1.5rem !important;
+          height: 1.5rem !important;
+          display: block !important;
+        }
+        
+        /* Alinhamento do wrapper de botões com H2 */
+        .buttons-wrapper {
+          display: inline !important;
+          vertical-align: middle !important;
+          margin-left: 0.5rem !important;
+        }
+        
+        /* Botões dentro do wrapper mantêm espaçamento */
+        .buttons-wrapper button.ouvir {
+          margin-left: 0 !important;
+          margin-right: 0.5rem !important;
+        }
+        
+        .buttons-wrapper button.editar {
+          margin-left: 0 !important;
+        }
         
         /* Garantir que font-size funcione no container */
         [data-apostila-container] {
           font-size: var(--font-size, 1rem) !important;
+        }
+        
+        /* Garantir espaçamento entre parágrafos */
+        [data-apostila-container] .content p {
+          margin-bottom: 1rem !important;
+        }
+        
+        [data-apostila-container] .content p:last-child {
+          margin-bottom: 0 !important;
         }
       `;
       document.head.appendChild(style);
     }
 
     const toggleSection = (h2) => {
+      // O wrapper mantém a mesma estrutura: H2 -> nextEl -> conteúdo
+      // Seja nextEl um button.ouvir direto ou um wrapper com botões dentro
       const content = h2.nextElementSibling && h2.nextElementSibling.nextElementSibling;
       const expanded = h2.getAttribute('aria-expanded') === 'true';
       h2.setAttribute('aria-expanded', !expanded);
@@ -209,6 +474,17 @@ export default function Apostila({ htmlText }) {
         }
         return;
       }
+
+      // Edição de seção
+      const editarBtn = target.closest && target.closest('button.editar');
+      if (editarBtn && container.contains(editarBtn)) {
+        e.preventDefault();
+        const sectionId = editarBtn.getAttribute('data-section');
+        if (sectionId) {
+          openEditModal(sectionId);
+        }
+        return;
+      }
     };
 
     const onKeyDown = (e) => {
@@ -240,7 +516,7 @@ export default function Apostila({ htmlText }) {
       container.removeEventListener('keydown', onKeyDown, true);
       container.removeEventListener('touchstart', onTouch, true);
     };
-  }, [html]);
+  }, [html, openEditModal]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -288,6 +564,65 @@ export default function Apostila({ htmlText }) {
                 </div>
               </div>
             )}
+
+            {/* Modal de edição de seção */}
+            {showEditModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={() => setShowEditModal(false)}>
+                <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-gray-800">Editar Seção</h3>
+                    <button 
+                      onClick={() => setShowEditModal(false)} 
+                      className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                      disabled={isSaving}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <div className="mb-4 text-sm text-gray-600">
+                    Edite o texto da seção abaixo. Use <strong>Enter</strong> para quebras de linha e <strong>Enter duplo</strong> para separar parágrafos.
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto mb-4">
+                    <textarea
+                      value={editingText}
+                      onChange={(e) => setEditingText(e.target.value)}
+                      className="w-full h-full min-h-[300px] px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-sans"
+                      placeholder="Digite o texto da seção aqui...&#10;&#10;Use Enter para quebrar linhas&#10;Use Enter duplo para separar parágrafos"
+                      disabled={isSaving}
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => setShowEditModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={isSaving}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={saveEdit}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Salvando...
+                        </>
+                      ) : (
+                        'Salvar'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center text-gray-600">
@@ -298,5 +633,4 @@ export default function Apostila({ htmlText }) {
     </div>
   );
 }
-
 
