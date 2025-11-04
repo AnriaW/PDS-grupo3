@@ -17,16 +17,11 @@ export default function Apostila({ htmlText }) {
   const apostilaRef = useRef(null);
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
-
-  // Verificação nativa: se tem apostilaId no state, o usuário é o criador
-  // (veio da biblioteca que já filtra por email do usuário)
   const isCreator = !!apostilaId;
 
-  // Buscar HTML atualizado do Supabase sempre que a página carregar
   useEffect(() => {
     const fetchHtmlFromSupabase = async () => {
       if (apostilaId) {
-        console.log('Buscando HTML atualizado do Supabase para ID:', apostilaId);
         try {
           const { data, error } = await supabase
             .from('files')
@@ -35,20 +30,15 @@ export default function Apostila({ htmlText }) {
             .single();
           
           if (error) {
-            console.error('Erro ao buscar do Supabase:', error);
-            // Se falhar, usa o HTML do location.state como fallback
             if (location.state?.htmlText) {
               setHtml(location.state.htmlText);
             } else if (htmlText) {
               setHtml(htmlText);
             }
           } else if (data?.file) {
-            console.log('HTML carregado do Supabase com sucesso! Tamanho:', data.file.length);
             setHtml(data.file);
           }
-        } catch (err) {
-          console.error('Erro ao buscar HTML:', err);
-          // Fallback para location.state
+        } catch {
           if (location.state?.htmlText) {
             setHtml(location.state.htmlText);
           } else if (htmlText) {
@@ -56,7 +46,6 @@ export default function Apostila({ htmlText }) {
           }
         }
       } else {
-        // Se não tem ID (apostila compartilhada), usa o HTML passado por props
         if (htmlText) {
           setHtml(htmlText);
         } else if (location.state?.htmlText) {
@@ -67,67 +56,49 @@ export default function Apostila({ htmlText }) {
     
     fetchHtmlFromSupabase();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apostilaId]); // Intencionalmente só depende do apostilaId para sempre buscar do Supabase
+  }, [apostilaId]);
 
   useEffect(() => {
     if (html) {
-      // Extrair e aplicar estilos CSS do HTML
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const styles = doc.querySelectorAll('style');
       
-      // Aplicar estilos ao head (modificando para funcionar com container)
       styles.forEach((style, index) => {
         const styleId = `apostila-style-${index}`;
         if (!document.getElementById(styleId)) {
           const newStyle = document.createElement('style');
           newStyle.id = styleId;
-          // Modificar CSS para aplicar no container em vez do body
           let cssText = style.textContent;
           
-          // 1. Substituir 'body {' por seletor que funcione com container
           cssText = cssText.replace(/body\s*{/g, 'body, [data-apostila-container] {');
-          
-          // 2. Substituir '.dark' para funcionar quando aplicado ao container
           cssText = cssText.replace(/\.dark\s+/g, '.dark, [data-apostila-container].dark ');
-          
-          // 3. Modificar .capa para ocupar toda largura com altura fixa de 100px
           cssText = cssText.replace(/\.capa\s*{([^}]*)}/g, '.capa { width: 100% !important; max-width: 100% !important; min-width: 100% !important; height: 25vh !important; max-height: 25vh !important; margin: 0 !important; display: block !important; object-fit: cover !important; }');
           
-          console.log(`CSS modificado (style ${index}):`, cssText.substring(0, 300));
           newStyle.textContent = cssText;
           document.head.appendChild(newStyle);
         }
       });
 
-      // Extrair apenas o conteúdo do body
       const bodyContent = doc.body ? doc.body.innerHTML : html;
       
-      // Atualizar o conteúdo
       if (apostilaRef.current) {
-        // Marcar container com atributo especial para CSS funcionar
         apostilaRef.current.setAttribute('data-apostila-container', 'true');
         apostilaRef.current.innerHTML = bodyContent;
         
-        // Adicionar botões de edição se o usuário for o criador
         if (isCreator) {
           const ouvirButtons = apostilaRef.current.querySelectorAll('button.ouvir');
           ouvirButtons.forEach((btn) => {
-            // Verificar se o botão de edição já existe
             if (btn.parentElement?.classList.contains('buttons-wrapper')) return;
             
             const sectionId = btn.getAttribute('data-section');
-            
-            // Criar wrapper para os botões
             const wrapper = document.createElement('div');
             wrapper.className = 'buttons-wrapper';
             
-            // Mover o botão ouvir para dentro do wrapper
             const parent = btn.parentNode;
             const nextSibling = btn.nextSibling;
             wrapper.appendChild(btn);
             
-            // Criar botão de editar com tamanho idêntico ao botão de som
             const editBtn = document.createElement('button');
             editBtn.className = 'editar';
             editBtn.setAttribute('data-section', sectionId);
@@ -139,18 +110,10 @@ export default function Apostila({ htmlText }) {
               </svg>
             `;
             wrapper.appendChild(editBtn);
-            
-            // Inserir o wrapper no lugar do botão original
             parent.insertBefore(wrapper, nextSibling);
           });
         }
         
-        // MODIFICAÇÕES EM TEMPO REAL NO DOM (APÓS INSERÇÃO)
-        // 1. Imagem já é centralizada via CSS modificado
-        const capaImg = apostilaRef.current.querySelector('.capa');
-        console.log('Imagem capa encontrada?', !!capaImg, capaImg);
-
-        // 2. Modificar botão de tema para funcionar corretamente
         const toggleThemeBtn = apostilaRef.current.querySelector('#toggle-theme');
         if (toggleThemeBtn) {
           toggleThemeBtn.style.display = 'inline-flex';
@@ -164,10 +127,7 @@ export default function Apostila({ htmlText }) {
           toggleThemeBtn.style.cursor = 'pointer';
         }
 
-        // 3. Definir --font-size inicial no container (não no root)
         apostilaRef.current.style.setProperty('--font-size', '1rem');
-        console.log('Font-size inicial definido:', apostilaRef.current.style.getPropertyValue('--font-size'));
-        // garantir que container pode posicionar elementos absolutos (botão)
         if (!apostilaRef.current.style.position) apostilaRef.current.style.position = 'relative';
       }
     }
@@ -175,117 +135,77 @@ export default function Apostila({ htmlText }) {
 
   const currentLink = `${window.location.origin}/apostila/${apostilaId}`;
 
-  // Função para abrir o modal de edição
   const openEditModal = useCallback((sectionId) => {
     if (!apostilaRef.current) return;
     
     const section = apostilaRef.current.querySelector(`#${sectionId}`);
     if (!section) return;
     
-    // Pegar o HTML da seção
     const htmlContent = section.innerHTML;
-    
-    // Formatá-lo para melhor visualização (quebrar tags em linhas)
     const formattedHtml = htmlContent
-      .replace(/></g, '>\n<')  // quebrar tags em linhas separadas
-      .replace(/\n\s*\n/g, '\n'); // remover linhas vazias duplicadas
+      .replace(/></g, '>\n<')
+      .replace(/\n\s*\n/g, '\n');
     
     setEditingSectionId(sectionId);
     setEditingText(formattedHtml);
     setShowEditModal(true);
   }, []);
 
-  // Função para salvar as alterações
   const saveEdit = async () => {
     if (!editingSectionId || !apostilaRef.current) return;
     
     setIsSaving(true);
     try {
-      console.log('=== SALVANDO EDIÇÃO HTML ===');
-      console.log('Seção ID:', editingSectionId);
-      
-      // Encontrar a seção no DOM
       const section = apostilaRef.current.querySelector(`#${editingSectionId}`);
       if (!section) {
         alert('Seção não encontrada.');
         return;
       }
 
-      // O texto editado já é HTML, usar diretamente
       const newHtmlContent = editingText.trim();
-      
-      console.log('Novo HTML (primeiros 200 chars):', newHtmlContent.substring(0, 200));
-      console.log('Comprimento do novo HTML:', newHtmlContent.length);
-
-      // Atualizar o DOM localmente primeiro
       section.innerHTML = newHtmlContent;
 
-      // Atualizar o HTML original usando replace em string
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const sectionInDoc = doc.querySelector(`#${editingSectionId}`);
       
       if (!sectionInDoc) {
-        console.error('Seção não encontrada no HTML original!');
         alert('Erro: Seção não encontrada no HTML original.');
         return;
       }
       
       const oldContent = sectionInDoc.innerHTML;
-      
-      console.log('HTML antigo (primeiros 200 chars):', oldContent.substring(0, 200));
-      console.log('Comprimento do HTML antigo:', oldContent.length);
-      
-      // Substituir o conteúdo antigo pelo novo no HTML string
       let updatedHtml = html.replace(oldContent, newHtmlContent);
       
-      // Verificar se a substituição funcionou
       if (updatedHtml === html) {
-        console.warn('⚠️ A substituição não funcionou! Tentando método alternativo...');
-        // Atualizar usando DOM
         sectionInDoc.innerHTML = newHtmlContent;
         updatedHtml = doc.documentElement.outerHTML;
       }
-      
-      console.log('HTML foi atualizado?', updatedHtml !== html);
 
-      // Salvar no Supabase (na coluna 'file')
       const { error, data } = await supabase
         .from('files')
-        .update({ 
-          file: updatedHtml
-        })
+        .update({ file: updatedHtml })
         .eq('id', apostilaId)
         .select();
 
       if (error) {
-        console.error('Erro ao salvar no Supabase:', error);
         alert('Erro ao salvar as alterações. Tente novamente.');
         return;
       }
       
       if (!data || data.length === 0) {
-        console.error('Nenhum dado retornado do Supabase');
         alert('Erro: A apostila não foi encontrada ou você não tem permissão para editá-la.');
         return;
       }
-      
-      console.log('Salvo com sucesso no Supabase!');
 
-      // Atualizar o state local do HTML para que próximas edições funcionem
       setHtml(updatedHtml);
-
-      // Fechar modal
       setShowEditModal(false);
       setEditingSectionId(null);
       setEditingText('');
       
       alert('Alterações salvas com sucesso!');
-      
-      // Recarregar a página para buscar o HTML atualizado do Supabase
       window.location.reload();
-    } catch (err) {
-      console.error('Erro ao salvar edição:', err);
+    } catch {
       alert('Erro ao salvar as alterações. Tente novamente.');
     } finally {
       setIsSaving(false);
