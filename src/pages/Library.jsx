@@ -213,12 +213,12 @@ const Library = () => {
 
   const getApostilaStatus = (apostila) => {
     if (downloadingPdf === apostila.id) {
-      return { text: '📥 Baixando...', color: 'text-blue-600' };
+      return { text: 'Baixando...', color: 'text-blue-600' };
     }
     if (apostila.is_generating) {
-      return { text: '🔄 Gerando...', color: 'text-yellow-600' };
+      return { text: 'Gerando...', color: 'text-yellow-600' };
     }
-    return { text: '✅ Pronto', color: 'text-green-700' };
+    return { text: 'Pronto', color: 'text-green-700' };
   };
 
   const filteredApostilas = apostilasDb.filter(apostila => {
