@@ -14,7 +14,9 @@ const Library = () => {
   const [apostilasDb, setApostilasDb] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const intervalRef = useRef(null);
+  const ITEMS_PER_PAGE = 9;
 
   useEffect(() => {
     fetchApostilas();
@@ -53,6 +55,11 @@ const Library = () => {
       }, 5000); // 5 segundos quando há apostilas gerando
     }
   }, [apostilasDb]);
+
+  // Reseta para página 1 quando filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortBy]);
 
   const fetchApostilas = async () => {
     setLoading(true);
@@ -301,6 +308,12 @@ const Library = () => {
     }
   });
 
+  // Cálculos de paginação
+  const totalPages = Math.ceil(sortedApostilas.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentApostilas = sortedApostilas.slice(startIndex, endIndex);
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -353,7 +366,7 @@ const Library = () => {
         </div>
 
         {/* Grid de apostilas */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {loading && (
             Array.from({ length: 6 }).map((_, idx) => (
               <div key={`skeleton-${idx}`} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
@@ -377,7 +390,7 @@ const Library = () => {
               </div>
             ))
           )}
-          {!loading && sortedApostilas.map((apostila) => {
+          {!loading && currentApostilas.map((apostila) => {
             const title = apostila.titulo || 'Capítulo';
             const descricao = apostila.file?.descricao || '';
             const disabled = !!apostila.is_generating || downloadingPdf === apostila.id;
@@ -483,6 +496,50 @@ const Library = () => {
             );
           })}
         </div>
+
+        {/* Paginação */}
+        {!loading && sortedApostilas.length > ITEMS_PER_PAGE && (
+          <div className="mb-8">
+            <div className="flex justify-center items-center gap-2 mb-4">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                Anterior
+              </button>
+              
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 rounded-lg transition ${
+                      currentPage === page
+                        ? 'bg-blue-600 text-white'
+                        : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                Próxima
+              </button>
+            </div>
+            
+            {/* Informação de paginação */}
+            <div className="text-center text-sm text-gray-600">
+              Mostrando {startIndex + 1} a {Math.min(endIndex, sortedApostilas.length)} de {sortedApostilas.length} apostilas
+            </div>
+          </div>
+        )}
 
         {/* Mensagem se não houver apostilas */}
         {!loading && sortedApostilas.length === 0 && (
