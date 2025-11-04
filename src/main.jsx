@@ -16,6 +16,7 @@ import ChangePassword from './pages/ChangePassword';
 import DeleteAccount from './pages/DeleteAccount';
 import RecoverAccount from './pages/RecoverAccount';
 import ResetPassword from './pages/ResetPassword';
+import SharedApostila from './pages/SharedApostila';
 
 const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
   {
     path: '/reset-password',
     element: <ResetPassword />,
+  },
+  {
+    path: '/apostila/:id',
+    element: <SharedApostila />,
   }
 
 ]);

@@ -90,18 +90,61 @@ export default function CreateApostila() {
           {/* Campo Componente */}
           <div className="mb-6">
             <label htmlFor="componente" className="block text-sm font-medium text-gray-700 mb-1">
-              Componente *
+              Componente Curricular *
             </label>
-            <input
-              type="text"
+            <select
               id="componente"
               name="componente"
-              placeholder="Ex: Matemática"
               value={formData.componente}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
-            />
+            >
+              <option value="">Selecione um componente...</option>
+              
+              {/* Linguagens */}
+              <optgroup label="Linguagens">
+                <option value="Língua Portuguesa">Língua Portuguesa</option>
+                <option value="Arte">Arte</option>
+                <option value="Educação Física">Educação Física</option>
+                <option value="Língua Inglesa">Língua Inglesa</option>
+                <option value="Língua Espanhola">Língua Espanhola</option>
+              </optgroup>
+
+              {/* Matemática */}
+              <optgroup label="Matemática">
+                <option value="Matemática">Matemática</option>
+              </optgroup>
+
+              {/* Ciências da Natureza */}
+              <optgroup label="Ciências da Natureza">
+                <option value="Ciências">Ciências</option>
+                <option value="Biologia">Biologia</option>
+                <option value="Física">Física</option>
+                <option value="Química">Química</option>
+              </optgroup>
+
+              {/* Ciências Humanas */}
+              <optgroup label="Ciências Humanas">
+                <option value="História">História</option>
+                <option value="Geografia">Geografia</option>
+                <option value="Filosofia">Filosofia</option>
+                <option value="Sociologia">Sociologia</option>
+              </optgroup>
+
+              {/* Ensino Religioso */}
+              <optgroup label="Ensino Religioso">
+                <option value="Ensino Religioso">Ensino Religioso</option>
+              </optgroup>
+
+              {/* Itinerários Formativos (Ensino Médio) */}
+              <optgroup label="Itinerários Formativos">
+                <option value="Projeto de Vida">Projeto de Vida</option>
+                <option value="Educação Financeira">Educação Financeira</option>
+                <option value="Empreendedorismo">Empreendedorismo</option>
+                <option value="Tecnologias Digitais">Tecnologias Digitais</option>
+              </optgroup>
+            </select>
           </div>
 
           {/* Campo Ano */}
