@@ -15,6 +15,8 @@ export default function Apostila({ htmlText }) {
   const [isSaving, setIsSaving] = useState(false);
   const [html, setHtml] = useState(htmlText ?? location.state?.htmlText ?? '');
   const apostilaRef = useRef(null);
+  const textareaRef = useRef(null);
+  const highlightRef = useRef(null);
 
   // Verificação nativa: se tem apostilaId no state, o usuário é o criador
   // (veio da biblioteca que já filtra por email do usuário)
@@ -173,33 +175,6 @@ export default function Apostila({ htmlText }) {
 
   const currentLink = `${window.location.origin}/apostila/${apostilaId}`;
 
-  // Função para extrair texto puro de HTML (sem tags) preservando quebras de linha
-  const extractPlainText = (htmlContent) => {
-    // Substituir tags que representam quebras de linha
-    let text = htmlContent
-      .replace(/<br\s*\/?>/gi, '\n')           // <br> vira \n
-      .replace(/<\/p>\s*<p[^>]*>/gi, '\n\n')   // Entre parágrafos: dupla quebra
-      .replace(/<p[^>]*>/gi, '')                // Remove abertura de <p>
-      .replace(/<\/p>/gi, '')                   // Remove fechamento de <p>
-      .replace(/<\/div>\s*<div[^>]*>/gi, '\n\n') // Entre divs: dupla quebra
-      .replace(/<div[^>]*>/gi, '')              // Remove <div>
-      .replace(/<\/div>/gi, '');                // Remove </div>
-    
-    // Remover outras tags HTML
-    const div = document.createElement('div');
-    div.innerHTML = text;
-    text = div.textContent || div.innerText || '';
-    
-    // Normalizar múltiplas quebras de linha seguidas
-    text = text.replace(/\n{3,}/g, '\n\n');
-    
-    // Remover espaços extras no início e fim de cada linha
-    text = text.split('\n').map(line => line.trim()).join('\n');
-    
-    // Remover espaços no início e fim do texto completo
-    return text.trim();
-  };
-
   // Função para abrir o modal de edição
   const openEditModal = useCallback((sectionId) => {
     if (!apostilaRef.current) return;
@@ -207,11 +182,16 @@ export default function Apostila({ htmlText }) {
     const section = apostilaRef.current.querySelector(`#${sectionId}`);
     if (!section) return;
     
-    // Extrair texto puro do HTML
-    const plainText = extractPlainText(section.innerHTML);
+    // Pegar o HTML da seção
+    const htmlContent = section.innerHTML;
+    
+    // Formatá-lo para melhor visualização (quebrar tags em linhas)
+    const formattedHtml = htmlContent
+      .replace(/></g, '>\n<')  // quebrar tags em linhas separadas
+      .replace(/\n\s*\n/g, '\n'); // remover linhas vazias duplicadas
     
     setEditingSectionId(sectionId);
-    setEditingText(plainText);
+    setEditingText(formattedHtml);
     setShowEditModal(true);
   }, []);
 
@@ -221,6 +201,9 @@ export default function Apostila({ htmlText }) {
     
     setIsSaving(true);
     try {
+      console.log('=== SALVANDO EDIÇÃO HTML ===');
+      console.log('Seção ID:', editingSectionId);
+      
       // Encontrar a seção no DOM
       const section = apostilaRef.current.querySelector(`#${editingSectionId}`);
       if (!section) {
@@ -228,22 +211,16 @@ export default function Apostila({ htmlText }) {
         return;
       }
 
-      // Converter o texto simples de volta para HTML preservando quebras de linha
-      // Dividir em parágrafos (dupla quebra de linha ou mais)
-      const paragraphs = editingText
-        .split(/\n\s*\n/)
-        .filter(para => para.trim() !== '')
-        .map(para => {
-          // Dentro de cada parágrafo, converter quebras de linha simples em <br>
-          const lines = para.trim().split('\n').map(line => line.trim()).join('<br>');
-          return `<p>${lines}</p>`;
-        })
-        .join('\n');
+      // O texto editado já é HTML, usar diretamente
+      const newHtmlContent = editingText.trim();
+      
+      console.log('Novo HTML (primeiros 200 chars):', newHtmlContent.substring(0, 200));
+      console.log('Comprimento do novo HTML:', newHtmlContent.length);
 
       // Atualizar o DOM localmente primeiro
-      section.innerHTML = paragraphs;
+      section.innerHTML = newHtmlContent;
 
-      // Atualizar o HTML original usando replace em string para preservar exatamente a estrutura
+      // Atualizar o HTML original usando replace em string
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const sectionInDoc = doc.querySelector(`#${editingSectionId}`);
@@ -256,8 +233,21 @@ export default function Apostila({ htmlText }) {
       
       const oldContent = sectionInDoc.innerHTML;
       
+      console.log('HTML antigo (primeiros 200 chars):', oldContent.substring(0, 200));
+      console.log('Comprimento do HTML antigo:', oldContent.length);
+      
       // Substituir o conteúdo antigo pelo novo no HTML string
-      let updatedHtml = html.replace(oldContent, paragraphs);
+      let updatedHtml = html.replace(oldContent, newHtmlContent);
+      
+      // Verificar se a substituição funcionou
+      if (updatedHtml === html) {
+        console.warn('⚠️ A substituição não funcionou! Tentando método alternativo...');
+        // Atualizar usando DOM
+        sectionInDoc.innerHTML = newHtmlContent;
+        updatedHtml = doc.documentElement.outerHTML;
+      }
+      
+      console.log('HTML foi atualizado?', updatedHtml !== html);
 
       // Salvar no Supabase (na coluna 'file')
       const { error, data } = await supabase
@@ -580,18 +570,138 @@ export default function Apostila({ htmlText }) {
                     </button>
                   </div>
                   
-                  <div className="mb-4 text-sm text-gray-600">
-                    Edite o texto da seção abaixo. Use <strong>Enter</strong> para quebras de linha e <strong>Enter duplo</strong> para separar parágrafos.
+                  <div className="mb-4 text-sm">
+                    {/* Aviso de CUIDADO */}
+                    <div className="bg-orange-50 border-l-4 border-orange-500 p-3 mb-3">
+                      <div className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <div className="text-gray-800">
+                          <strong className="text-orange-900">⚠️ CUIDADO:</strong> Você está editando o HTML da seção.
+                          <p className="mt-1 text-xs text-gray-700">
+                            <strong>Mexa no HTML o MÍNIMO possível!</strong> Edite apenas o texto entre as tags, não as tags em si.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Guia de tags */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                      <div className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1 a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        <div className="text-gray-700">
+                          <strong className="text-gray-900">📘 Guia rápido de tags HTML:</strong>
+                          <ul className="mt-2 ml-4 text-xs space-y-1 font-mono">
+                            <li><code className="bg-gray-200 px-1 rounded">&lt;p&gt;</code> = Parágrafo</li>
+                            <li><code className="bg-gray-200 px-1 rounded">&lt;h1&gt;, &lt;h2&gt;</code> = Títulos</li>
+                            <li><code className="bg-gray-200 px-1 rounded">&lt;bold&gt;</code> = Negrito</li>
+                            <li><code className="bg-gray-200 px-1 rounded">&lt;em&gt;</code> = Itálico</li>
+                            <li><code className="bg-gray-200 px-1 rounded">&lt;ul&gt;&lt;li&gt;</code> = Listas</li>
+                            <li><code className="bg-gray-200 px-1 rounded">&lt;br&gt;</code> = Quebra de linha</li>
+                            <li className="text-orange-700 font-bold mt-2">❌ NÃO delete ou modifique as tags!</li>
+                            <li className="text-green-700 font-bold">✅ Edite APENAS o texto entre as tags</li>
+                            <li className="text-blue-700 mt-2">💡 As tags aparecem com opacidade reduzida no editor</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto mb-4">
-                    <textarea
-                      value={editingText}
-                      onChange={(e) => setEditingText(e.target.value)}
-                      className="w-full h-full min-h-[300px] px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-sans"
-                      placeholder="Digite o texto da seção aqui...&#10;&#10;Use Enter para quebrar linhas&#10;Use Enter duplo para separar parágrafos"
-                      disabled={isSaving}
-                    />
+                  <div className="flex-1 mb-4 min-h-0">
+                    <style>{`
+                      .code-input-container {
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                        min-height: 200px;
+                        border: 1px solid #d1d5db;
+                        border-radius: 0.375rem;
+                        background: white;
+                      }
+                      
+                      .code-input-container:focus-within {
+                        border-color: #3b82f6;
+                        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+                      }
+                      
+                      .code-highlight, .code-input {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        padding: 12px 16px;
+                        margin: 0;
+                        border: 0;
+                        font-family: Consolas, Monaco, "Courier New", monospace;
+                        font-size: 13px;
+                        line-height: 1.6;
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                        overflow-wrap: break-word;
+                        box-sizing: border-box;
+                      }
+                      
+                      .code-highlight {
+                        color: #1a1a1a;
+                        background: transparent;
+                        pointer-events: none;
+                        overflow: hidden;
+                        z-index: 1;
+                      }
+                      
+                      .code-input {
+                        color: transparent;
+                        background: transparent;
+                        caret-color: #1a1a1a;
+                        resize: none;
+                        outline: none;
+                        overflow: auto;
+                        z-index: 2;
+                      }
+                      
+                      .code-input::selection {
+                        background-color: rgba(59, 130, 246, 0.3);
+                      }
+                      
+                      .tag-opacity {
+                        opacity: 0.3;
+                      }
+                    `}</style>
+                    
+                    <div className="code-input-container">
+                      <pre
+                        ref={highlightRef}
+                        className="code-highlight"
+                        aria-hidden="true"
+                        dangerouslySetInnerHTML={{
+                          __html: editingText
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/(&lt;[^&]*?&gt;)/g, '<span class="tag-opacity">$1</span>')
+                        }}
+                      />
+                      
+                      <textarea
+                        ref={textareaRef}
+                        value={editingText}
+                        onChange={(e) => setEditingText(e.target.value)}
+                        onScroll={(e) => {
+                          if (highlightRef.current) {
+                            highlightRef.current.scrollTop = e.target.scrollTop;
+                            highlightRef.current.scrollLeft = e.target.scrollLeft;
+                          }
+                        }}
+                        className="code-input"
+                        placeholder="<p>Edite o HTML aqui...</p>"
+                        disabled={isSaving}
+                        spellCheck={false}
+                      />
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-3">
