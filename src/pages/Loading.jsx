@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const Loading = () => {
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const totalTime = 30 * 1000;
+    const totalTime = 3*60*1000;
     const updateInterval = 100; 
 
     const startTime = Date.now();
@@ -29,6 +31,7 @@ const Loading = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
+      <Header />
       <div className="text-center max-w-md w-full">
         {/* Spinner animado */}
         <div className="w-20 h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-8"></div>
@@ -56,7 +59,7 @@ const Loading = () => {
         <div className="flex justify-between text-sm text-gray-500 mb-2">
           <span>{Math.round(progress)}% concluído</span>
           <span>
-            {Math.ceil((30) * ((100 - progress) / 100))}s restantes
+            {Math.ceil((3*60) * ((100 - progress) / 100))}s restantes
           </span>
         </div>
 
@@ -69,6 +72,7 @@ const Loading = () => {
           {progress >= 100 && "Redirecionando..."}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
