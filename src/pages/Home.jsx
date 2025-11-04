@@ -63,7 +63,7 @@ const Home = () => {
 
       if (error) throw error;
       navigate('/apostila', {
-        state: { htmlText: data.file }
+        state: { htmlText: data.file, id: apostila.id }
       });
     } catch (err) {
       console.error('Erro ao carregar apostila:', err);

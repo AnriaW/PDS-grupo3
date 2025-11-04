@@ -15,6 +15,7 @@ export default function CreateApostila() {
     exerciciosGuiados: 0,
     exercicios: 0
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +27,9 @@ export default function CreateApostila() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return; // evita múltiplos envios
+    setIsSubmitting(true);
 
     const userData = localStorage.getItem("userData");
     const id = uuid();
@@ -54,6 +58,7 @@ export default function CreateApostila() {
     } catch (error) {
       console.error('Erro ao criar apostila:', error);
     } finally {
+      setIsSubmitting(false);
       navigate('/loading');
     }
   };
@@ -234,9 +239,10 @@ export default function CreateApostila() {
           <div className="text-center">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={isSubmitting}
+              className={`bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isSubmitting ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              Gerar Apostila
+              {isSubmitting ? 'Gerando...' : 'Gerar Apostila'}
             </button>
           </div>
         </form>

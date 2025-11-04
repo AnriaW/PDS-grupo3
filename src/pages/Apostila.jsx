@@ -1,9 +1,14 @@
-import React, { useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useRef, useLayoutEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { supabase } from '../supabase';
 import Header from '../components/Header';
 
 export default function Apostila({ htmlText }) {
   const location = useLocation();
+  const apostilaId = location.state?.id ?? null;
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [isUpdatingShare, setIsUpdatingShare] = useState(false);
   const html = htmlText ?? location.state?.htmlText ?? '';
   const apostilaRef = useRef(null);
 
@@ -69,9 +74,53 @@ export default function Apostila({ htmlText }) {
         // 3. Definir --font-size inicial no container (não no root)
         apostilaRef.current.style.setProperty('--font-size', '1rem');
         console.log('Font-size inicial definido:', apostilaRef.current.style.getPropertyValue('--font-size'));
+        // garantir que container pode posicionar elementos absolutos (botão)
+        if (!apostilaRef.current.style.position) apostilaRef.current.style.position = 'relative';
       }
     }
   }, [html]);
+
+  const currentLink = `${window.location.origin}/apostila/${apostilaId}`;
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(currentLink);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar:', err);
+    }
+  };
+
+  const onShareClick = async () => {
+    if (!apostilaId) {
+      alert('ID da apostila não disponível para compartilhamento.');
+      return;
+    }
+    if (isUpdatingShare) return;
+    setIsUpdatingShare(true);
+    try {
+      const res = await supabase
+        .from('files')
+        .update({ is_shareable: true })
+        .eq('id', apostilaId)
+        .select()
+        .single();
+
+      if (res.error) {
+        console.error('Erro ao atualizar share flag:', res.error);
+        alert('Erro ao marcar como compartilhável.');
+        return;
+      }
+
+      setShowShareModal(true);
+    } catch (err) {
+      console.error('Erro no share:', err);
+      alert('Erro ao compartilhar. Tente novamente.');
+    } finally {
+      setIsUpdatingShare(false);
+    }
+  };
 
   useLayoutEffect(() => {
     if (!apostilaRef.current) return;
@@ -198,7 +247,48 @@ export default function Apostila({ htmlText }) {
       <Header />
       <div className="w-full">
         {html ? (
-          <div ref={apostilaRef} />
+          <div className="relative">
+            <div ref={apostilaRef} />
+
+            {/* Botão de compartilhar sobre a capa (aparece se tivermos id) */}
+            {apostilaId && (
+              <button
+                onClick={onShareClick}
+                disabled={isUpdatingShare}
+                aria-label="Compartilhar apostila"
+                className={`absolute top-4 right-4 z-50 bg-white/90 text-gray-800 px-3 py-2 rounded-md shadow-md hover:bg-white flex items-center gap-2 ${isUpdatingShare ? 'opacity-60 cursor-not-allowed' : ''}`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-700">
+                  <path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M16 6l-4-4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M12 2v14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Compartilhar
+              </button>
+            )}
+
+            {/* Modal simples de compartilhamento */}
+            {showShareModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)' }} onClick={() => setShowShareModal(false)}>
+                <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800">Compartilhar Apostila</h3>
+                    <button onClick={() => setShowShareModal(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Link da apostila</label>
+                    <div className="flex">
+                      <input type="text" value={currentLink} readOnly className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-gray-600 text-sm" />
+                      <button onClick={copyToClipboard} className={`px-4 py-2 rounded-r-md ${copySuccess ? 'bg-green-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}>
+                        {copySuccess ? 'Copiado!' : 'Copiar'}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500">Compartilhe esse link com quem desejar.</div>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           <div className="text-center text-gray-600">
             Nenhum conteúdo de apostila fornecido.
