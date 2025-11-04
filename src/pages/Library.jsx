@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Header from '../components/Header';
 import Footer from "../components/Footer";
 import { useNavigate } from 'react-router-dom';
@@ -14,17 +14,45 @@ const Library = () => {
   const [apostilasDb, setApostilasDb] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     fetchApostilas();
     
-    // Configura refresh automático a cada 10 segundos para apostilas em geração
-    const interval = setInterval(() => {
-      refreshGeneratingApostilas();
-    }, 10000);
+    // Limpa qualquer intervalo anterior
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
 
-    return () => clearInterval(interval);
+    // Configura refresh automático a cada 5 segundos
+    intervalRef.current = setInterval(() => {
+      refreshGeneratingApostilas();
+    }, 5000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, []);
+
+  // Monitora mudanças nas apostilas para ajustar o intervalo
+  useEffect(() => {
+    const hasGenerating = apostilasDb.some(a => a.is_generating);
+    
+    // Se não há apostilas gerando, pode aumentar o intervalo
+    if (!hasGenerating && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => {
+        refreshGeneratingApostilas();
+      }, 30000); // 30 segundos quando não há apostilas gerando
+    } else if (hasGenerating && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => {
+        refreshGeneratingApostilas();
+      }, 5000); // 5 segundos quando há apostilas gerando
+    }
+  }, [apostilasDb]);
 
   const fetchApostilas = async () => {
     setLoading(true);
@@ -66,16 +94,51 @@ const Library = () => {
           .in('id', generatingApostilas.map(a => a.id));
 
         if (!error && data) {
-          // Atualiza apenas as apostilas que mudaram de status
-          setApostilasDb(prevApostilas => 
-            prevApostilas.map(apostila => {
+          // Atualiza as apostilas que mudaram
+          setApostilasDb(prevApostilas => {
+            const updated = prevApostilas.map(apostila => {
               const updatedApostila = data.find(a => a.id === apostila.id);
-              return updatedApostila ? { ...apostila, ...updatedApostila } : apostila;
-            })
-          );
+              if (updatedApostila) {
+                // Verifica se houve mudança real no status
+                if (apostila.is_generating && !updatedApostila.is_generating) {
+                  console.log(`Apostila "${updatedApostila.titulo}" está pronta!`);
+                }
+                return { ...apostila, ...updatedApostila };
+              }
+              return apostila;
+            });
+            return updated;
+          });
         }
       } catch (err) {
         console.error('Erro ao atualizar status das apostilas:', err);
+      }
+    } else {
+      // Se não há apostilas gerando, faz uma verificação completa periodicamente
+      // para capturar novas apostilas criadas
+      try {
+        const userData = localStorage.getItem("userData");
+        const rawEmail = JSON.parse(userData)?.email;
+        const email = rawEmail ? decodeURIComponent(rawEmail) : 'apostilabic@gmail.com';
+
+        const { data, error } = await supabase
+          .from('files')
+          .select('*')
+          .eq('email', email)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          // Verifica se há novas apostilas
+          const currentIds = apostilasDb.map(a => a.id);
+          const newApostilas = data.filter(a => !currentIds.includes(a.id));
+          
+          if (newApostilas.length > 0 || data.length !== apostilasDb.length) {
+            setApostilasDb(data);
+            console.log('Biblioteca atualizada com novas apostilas');
+          }
+        }
+      } catch (err) {
+        console.error('Erro na verificação periódica:', err);
       }
     }
   };

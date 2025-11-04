@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 const Loading = () => {
   const [progress, setProgress] = useState(0);
@@ -31,7 +29,6 @@ const Loading = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
-      <Header />
       <div className="text-center max-w-md w-full">
         {/* Spinner animado */}
         <div className="w-20 h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-8"></div>
@@ -72,7 +69,6 @@ const Loading = () => {
           {progress >= 100 && "Redirecionando..."}
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
