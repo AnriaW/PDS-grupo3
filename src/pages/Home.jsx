@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from "../components/Footer";
@@ -53,7 +53,7 @@ const Home = () => {
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
       console.log(data.file.length);
       if (data.file.length === 0) {
-        var { data, error } = await supabase
+        var { _data, _error } = await supabase
           .from('files')
           .select('file')
           .eq('id', apostila.id)
