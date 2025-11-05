@@ -112,7 +112,7 @@ export default function Landing() {
           <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <h3 className="text-xl font-semibold mb-2 inline-flex items-center justify-center gap-2 w-full">
               <BiSolidPencil className="text-blue-600 text-xl flex-none" />
-              Edição manual
+              É editável
             </h3>
             <p className="text-gray-600">Caso o conteúdo da apostila não seja de seu agrado, é possível editar seu texto pela plataforma.</p>
           </div>
