@@ -87,7 +87,7 @@ const router = createBrowserRouter([
     element: <ResetPassword />,
   },
   {
-    path: '/apostila/:id',
+    path: '/compartilhada/:id',
     element: <SharedApostila />,
   }
 

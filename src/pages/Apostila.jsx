@@ -133,7 +133,7 @@ export default function Apostila({ htmlText }) {
     }
   }, [html, isCreator]);
 
-  const currentLink = `${window.location.origin}/apostila/${apostilaId}`;
+  const currentLink = `${window.location.origin}/compartilhada/${apostilaId}`;
 
   const openEditModal = useCallback((sectionId) => {
     if (!apostilaRef.current) return;
