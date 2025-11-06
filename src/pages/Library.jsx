@@ -14,6 +14,7 @@ const Library = () => {
   const [apostilasDb, setApostilasDb] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const [accessingApostila, setAccessingApostila] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const intervalRef = useRef(null);
   const ITEMS_PER_PAGE = 9;
@@ -167,8 +168,9 @@ const Library = () => {
   }, []);
 
   const handleViewApostila = async (apostila) => {
-    if (apostila.is_generating) return;
+    if (apostila.is_generating || accessingApostila) return;
     setOpenDropdown(null);
+    setAccessingApostila(apostila.id);
 
     try {
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
@@ -188,36 +190,13 @@ const Library = () => {
       });
     } catch (err) {
       console.error('Erro ao carregar apostila:', err);
+    } finally {
+      setAccessingApostila(null);
     }
   };
 
-  const handleEditApostila = async (apostila) => {
-    if (apostila.is_generating) return;
-    setOpenDropdown(null);
-
-    try {
-      var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
-
-      if (data.file.length === 0) {
-        var { data, error } = await supabase
-          .from('files')
-          .select('file')
-          .eq('id', apostila.id)
-          .single();
-        console.log('Fallback to Supabase file fetch');
-      }
-
-      if (error) throw error;
-      navigate('/edit', {
-        state: { htmlText: data.file, id: apostila.id }
-      });
-    } catch (err) {
-      console.error('Erro ao carregar apostila:', err);
-    }
-  }
-
   const handlePdfGeneration = async (apostila) => {
-    if (apostila.is_generating) return;
+    if (apostila.is_generating || accessingApostila) return;
     setOpenDropdown(null);
     setDownloadingPdf(apostila.id);
 
@@ -261,7 +240,7 @@ const Library = () => {
   };
 
   const handleDeleteApostila = async (apostila) => {
-    if (apostila.is_generating) return;
+    if (apostila.is_generating || accessingApostila) return;
     setOpenDropdown(null);
 
     if (!window.confirm(`Tem certeza que deseja excluir a apostila "${apostila.titulo || 'Sem título'}"?`)) {
@@ -284,6 +263,9 @@ const Library = () => {
   const getApostilaStatus = (apostila) => {
     if (downloadingPdf === apostila.id) {
       return { text: 'Baixando...', color: 'text-blue-600' };
+    }
+    if (accessingApostila === apostila.id) {
+      return { text: 'Acessando...', color: 'text-blue-600' };
     }
     if (apostila.is_generating) {
       return { text: 'Gerando...', color: 'text-yellow-600' };
@@ -393,7 +375,7 @@ const Library = () => {
           {!loading && currentApostilas.map((apostila) => {
             const title = apostila.titulo || 'Capítulo';
             const descricao = apostila.file?.descricao || '';
-            const disabled = !!apostila.is_generating || downloadingPdf === apostila.id;
+            const disabled = !!apostila.is_generating || downloadingPdf === apostila.id || accessingApostila === apostila.id;
             const status = getApostilaStatus(apostila);
 
             return (
@@ -421,7 +403,6 @@ const Library = () => {
                     {openDropdown === apostila.id && (
                       <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                         <div className="py-1">
-
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -477,7 +458,8 @@ const Library = () => {
                   disabled={disabled}
                   onClick={() => handleViewApostila(apostila)}
                 >
-                  {disabled ? 'Aguarde...' : 'Ver Apostila Completa'}
+                  {accessingApostila === apostila.id ? 'Acessando...' : 
+                   disabled ? 'Aguarde...' : 'Ver Apostila Completa'}
                 </button>
               </div>
             );
