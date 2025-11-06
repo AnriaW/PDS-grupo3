@@ -20,7 +20,7 @@ const Library = () => {
 
   useEffect(() => {
     fetchApostilas();
-    
+
     // Limpa qualquer intervalo anterior
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -41,7 +41,7 @@ const Library = () => {
   // Monitora mudanças nas apostilas para ajustar o intervalo
   useEffect(() => {
     const hasGenerating = apostilasDb.some(a => a.is_generating);
-    
+
     // Se não há apostilas gerando, pode aumentar o intervalo
     if (!hasGenerating && intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -87,7 +87,7 @@ const Library = () => {
   const refreshGeneratingApostilas = async () => {
     // Verifica se há apostilas em geração
     const generatingApostilas = apostilasDb.filter(apostila => apostila.is_generating);
-    
+
     if (generatingApostilas.length > 0) {
       try {
         const userData = localStorage.getItem("userData");
@@ -138,7 +138,7 @@ const Library = () => {
           // Verifica se há novas apostilas
           const currentIds = apostilasDb.map(a => a.id);
           const newApostilas = data.filter(a => !currentIds.includes(a.id));
-          
+
           if (newApostilas.length > 0 || data.length !== apostilasDb.length) {
             setApostilasDb(data);
             console.log('Biblioteca atualizada com novas apostilas');
@@ -224,7 +224,7 @@ const Library = () => {
     try {
       // Simula o tempo de download
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       var { data, error } = await apostilaAPI.getEditedApostila(apostila.id);
       console.log(data.file.length);
       if (data.file.length === 0) {
@@ -271,10 +271,10 @@ const Library = () => {
     try {
       // Adicionar a função para deletar no backend
       // await apostilaAPI.deleteApostila(apostila.id);
-      
+
       // Por enquanto, vamos apenas remover do estado local
       setApostilasDb(apostilasDb.filter(a => a.id !== apostila.id));
-      
+
       console.log('Apostila excluída:', apostila.id);
     } catch (err) {
       console.error('Erro ao excluir apostila:', err);
@@ -395,13 +395,13 @@ const Library = () => {
             const descricao = apostila.file?.descricao || '';
             const disabled = !!apostila.is_generating || downloadingPdf === apostila.id;
             const status = getApostilaStatus(apostila);
-            
+
             return (
               <div key={apostila.id} className={`bg-white rounded-lg border border-gray-200 p-6 transition-shadow ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md'}`}>
                 {/* Cabeçalho com título e menu dropdown */}
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="text-lg font-semibold text-gray-800 flex-1 pr-2">{title}</h3>
-                  
+
                   {/* Menu Dropdown */}
                   <div className="relative">
                     <button
@@ -421,20 +421,7 @@ const Library = () => {
                     {openDropdown === apostila.id && (
                       <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                         <div className="py-1">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditApostila(apostila);
-                            }}
-                            disabled={disabled}
-                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-                          >
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                            Editar
-                          </button>
-                          
+
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -448,7 +435,7 @@ const Library = () => {
                             </svg>
                             Gerar PDF
                           </button>
-                          
+
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -481,9 +468,9 @@ const Library = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <p className="text-sm text-gray-500 mb-4 line-clamp-3">{descricao}</p>
-                
+
                 {/* Botão principal - Ver Apostila Completa */}
                 <button
                   className={`w-full rounded py-2 px-4 transition ${disabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
@@ -508,17 +495,16 @@ const Library = () => {
               >
                 Anterior
               </button>
-              
+
               <div className="flex gap-2">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`w-10 h-10 rounded-lg transition ${
-                      currentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
+                    className={`w-10 h-10 rounded-lg transition ${currentPage === page
+                      ? 'bg-blue-600 text-white'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
                   >
                     {page}
                   </button>
@@ -533,7 +519,7 @@ const Library = () => {
                 Próxima
               </button>
             </div>
-            
+
             {/* Informação de paginação */}
             <div className="text-center text-sm text-gray-600">
               Mostrando {startIndex + 1} a {Math.min(endIndex, sortedApostilas.length)} de {sortedApostilas.length} apostilas
