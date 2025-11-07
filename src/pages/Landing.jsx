@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from "../components/Footer";
 import Header from '../components/Header';
@@ -9,41 +8,12 @@ import { BiSolidPencil } from 'react-icons/bi';
 import { FiMonitor } from 'react-icons/fi';
 
 export default function Landing() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = React.useState(false);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('userData');
-    if (savedUser) {
-      setIsUserLoggedIn(true);
-    };
-  }, []);
-
-  const header = isUserLoggedIn ? <Header /> : (
-    < header className="w-full border-b border-gray-300" >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="w-15 h-15" />
-          <h1 className="text-2xl font-bold">Apostilab</h1>
-        </div>
-        <nav className="space-x-4">
-          <nav className="space-x-4">
-            <Link to="/login" className="text-blue-600 hover:underline">
-              Login
-            </Link>
-            <Link to="/register" className="text-blue-600 hover:underline">
-              Registrar-se
-            </Link>
-          </nav>
-        </nav>
-      </div>
-    </header >
-  );
 
   return (
     <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
       {/* Cabeçalho - agora com container interno para limitar o conteúdo */}
 
-      {header}
+      <Header />
 
       {/* Seção Chamada */}
       <main className="w-full md:h-200 bg-cover bg-position-[center_top] 
