@@ -12,9 +12,7 @@ export default function Landing() {
   return (
     <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
       {/* Cabeçalho - agora com container interno para limitar o conteúdo */}
-
       <Header />
-
       {/* Seção Chamada */}
       <main className="w-full md:h-200 bg-cover bg-position-[center_top] 
         bg-[linear-gradient(to_bottom,transparent_40%,white_80%,white_90%),url(/por-favor-diga-nos-uma-resposta-correta.jpg)]">
