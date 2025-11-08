@@ -89,7 +89,7 @@ const Guide = () => {
         {
           step: 3,
           title: 'Use recursos de edição',
-          description: 'Formatação, adição de imagens e modificação de exercícios diretamente no conteúdo',
+          description: 'Formatação, adição de texto e modificação de exercícios diretamente no conteúdo',
           icon: '🎨'
         },
         {
@@ -97,6 +97,88 @@ const Guide = () => {
           title: 'Salve as alterações',
           description: 'As modificações são salvas automaticamente enquanto você edita',
           icon: '💾'
+        }
+      ]
+    },
+    pdf: {
+      title: '📄 Gerando PDFs',
+      steps: [
+        {
+          step: 1,
+          title: 'Acesse o menu da apostila',
+          description: 'Na biblioteca, clique nos três pontos (⋯) da apostila desejada',
+          icon: '📚'
+        },
+        {
+          step: 2,
+          title: 'Selecione "Gerar PDF"',
+          description: 'Escolha a opção no menu dropdown para iniciar a conversão',
+          icon: '📄'
+        },
+        {
+          step: 3,
+          title: 'Aguarde a conversão',
+          description: 'O sistema converte automaticamente o conteúdo para PDF (status: "📥 Baixando...")',
+          icon: '⏳'
+        },
+        {
+          step: 4,
+          title: 'Download automático',
+          description: 'O PDF é baixado automaticamente para seu dispositivo com o nome da apostila',
+          icon: '⬇️'
+        },
+        {
+          step: 5,
+          title: 'Conteúdo atualizado',
+          description: 'O PDF gerado contém todas as edições e modificações mais recentes da apostila',
+          icon: '🔄'
+        },
+        {
+          step: 6,
+          title: 'Formatação preservada',
+          description: 'Texto, questões, formatação e estrutura são mantidas fielmente no PDF gerado',
+          icon: '🎨'
+        }
+      ]
+    },
+    compartilhar: {
+      title: '👥 Compartilhando Apostilas',
+      steps: [
+        {
+          step: 1,
+          title: 'Acesse a apostila',
+          description: 'Clique em "Ver Apostila Completa" para abrir a apostila desejada',
+          icon: '📖'
+        },
+        {
+          step: 2,
+          title: 'Localize o botão Compartilhar',
+          description: 'Encontre o botão "Compartilhar" no canto superior direito da apostila',
+          icon: '🔍'
+        },
+        {
+          step: 3,
+          title: 'Clique para compartilhar',
+          description: 'O botão abre um modal com o link único da apostila',
+          icon: '👆'
+        },
+        {
+          step: 4,
+          title: 'Link copiado automaticamente',
+          description: 'O link é gerado e copiado para sua área de transferência',
+          icon: '📋'
+        },
+        {
+          step: 5,
+          title: 'Compartilhe onde quiser',
+          description: 'Cole o link em emails, mensagens ou onde desejar compartilhar',
+          icon: '📤'
+        },
+        {
+          step: 6,
+          title: 'Acesso imediato',
+          description: 'Quem receber o link pode acessar a apostila sem fazer login',
+          icon: '🚀'
         }
       ]
     },
@@ -194,7 +276,7 @@ const Guide = () => {
         {
           step: 4,
           title: 'Combine recursos',
-          description: 'Use PDF para impressão e compartilhamento com alunos',
+          description: 'Edite, use PDF para impressão e compartilhamento com alunos',
           icon: '📤'
         }
       ]
@@ -226,7 +308,7 @@ const Guide = () => {
       question: 'Posso excluir apostilas compartilhadas comigo?',
       answer: 'Não, você pode apenas visualizar apostilas compartilhadas. Apenas o proprietário pode excluí-las.'
     },
-  
+
     {
       question: 'Posso editar uma apostila que foi compartilhada comigo?',
       answer: 'Não, as apostilhas compartilhadas só podem ser editadas pelo proprietário da apostila.'
@@ -279,11 +361,10 @@ const Guide = () => {
                   <button
                     key={key}
                     onClick={() => setActiveSection(key)}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                      activeSection === key
-                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === key
+                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                      : 'text-gray-700 hover:bg-gray-100'
+                      }`}
                   >
                     {section.title}
                   </button>
