@@ -50,7 +50,7 @@ const Header = () => {
   };
 
   const handleDashboardClick = () => {
-    navigate('/home');
+    navigate('/');
     setUserMenuOpen(false);
   };
 
@@ -69,12 +69,12 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="fixed w-full border-b border-gray-300 bg-white">
+    <header className="w-full border-b border-gray-300 bg-white">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
 
         {/* Logo e Nome do App - Lado Esquerdo */}
         <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/home" className="flex items-center gap-2">
             <img src="/logo.png" alt="Logo" className="w-10 h-10" />
             <h1 className="text-2xl font-bold">Apostilab</h1>
           </Link>
