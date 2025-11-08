@@ -13,7 +13,7 @@ const Guide = () => {
         {
           step: 1,
           title: 'Acesse "Nova Apostila"',
-          description: 'No menu principal, clique em "Nova Apostila" para começar',
+          description: 'No Dashboard ou Biblioteca, clique em "Nova Apostila" para começar',
           icon: '🆕'
         },
         {
@@ -31,7 +31,7 @@ const Guide = () => {
         {
           step: 4,
           title: 'Aguarde o processamento',
-          description: 'Você será redirecionado para uma tela de loading com barra de progresso',
+          description: 'Acompanhe o status "Gerando..." na sua biblioteca',
           icon: '⏳'
         }
       ]
@@ -42,55 +42,131 @@ const Guide = () => {
         {
           step: 1,
           title: 'Acesse "Biblioteca"',
-          description: 'Veja todas as suas apostilas criadas organizadas por data',
+          description: 'Veja suas apostilas e as compartilhadas com você, organizadas por data ou nome',
           icon: '📁'
         },
         {
           step: 2,
-          title: 'Use a busca',
-          description: 'Encontre apostilas específicas pelo título, assunto ou conteúdo',
+          title: 'Use a busca e filtros',
+          description: 'Encontre apostilas por título, matéria, descrição ou proprietário',
           icon: '🔍'
         },
         {
           step: 3,
-          title: 'Filtre e ordene',
-          description: 'Organize por data de criação ou ordem alfabética',
-          icon: '↕️'
+          title: 'Menu de ações (⋯)',
+          description: 'Clique nos três pontos para editar, gerar PDF, compartilhar ou excluir',
+          icon: '⋯'
         },
         {
           step: 4,
-          title: 'Visualize e edite',
-          description: 'Clique em qualquer apostila para ver o conteúdo completo',
-          icon: '👀'
+          title: 'Status em tempo real',
+          description: 'Acompanhe: "Gerando...", "Baixando..." ou "Pronto"',
+          icon: '🔄'
+        },
+        {
+          step: 5,
+          title: 'Apostilas compartilhadas',
+          description: 'Identifique apostilas de outros usuários pelo indicador "👥 Compartilhada"',
+          icon: '👥'
+        }
+      ]
+    },
+    editar: {
+      title: '✏️ Editando Apostilas',
+      steps: [
+        {
+          step: 1,
+          title: 'Acesse a apostila',
+          description: 'Clique em "Ver Apostila Completa" na apostila que deseja editar',
+          icon: '📖'
+        },
+        {
+          step: 2,
+          title: 'Modifique o conteúdo',
+          description: 'Dentro da visualização da apostila, edite diretamente o texto e exercícios',
+          icon: '🔧'
+        },
+        {
+          step: 3,
+          title: 'Use recursos de edição',
+          description: 'Formatação, adição de imagens e modificação de exercícios diretamente no conteúdo',
+          icon: '🎨'
+        },
+        {
+          step: 4,
+          title: 'Salve as alterações',
+          description: 'As modificações são salvas automaticamente enquanto você edita',
+          icon: '💾'
+        }
+      ]
+    },
+    acessibilidade: {
+      title: '♿ Recursos de Acessibilidade',
+      steps: [
+        {
+          step: 1,
+          title: 'Leitura por áudio',
+          description: 'Use o botão "🎧 Ouvir" para ter o conteúdo lido em voz alta',
+          icon: '🎧'
+        },
+        {
+          step: 2,
+          title: 'Aumentar fonte',
+          description: 'Clique em "A+" para aumentar o tamanho do texto para melhor leitura',
+          icon: '🔍'
+        },
+        {
+          step: 3,
+          title: 'Diminuir fonte',
+          description: 'Use "A-" para reduzir o tamanho do texto conforme sua preferência',
+          icon: '📐'
+        },
+        {
+          step: 4,
+          title: 'Compartilhando Apostilas',
+          description: 'Na visualização da apostila, use o botão "Compartilhar',
+          icon: '👥'
         }
       ]
     },
     perfil: {
-      title: '👤 Personalizando seu Perfil',
+      title: '👤 Gerenciando sua Conta',
       steps: [
         {
           step: 1,
           title: 'Acesse seu perfil',
-          description: 'Clique na sua foto no canto superior direito e selecione "Meu Perfil"',
+          description: 'Clique na sua foto no canto superior direito → "Meu Perfil"',
           icon: '🖼️'
         },
         {
           step: 2,
+          title: 'Estatísticas automáticas',
+          description: 'Veja número de apostilas criadas, tempo na plataforma e seu nível',
+          icon: '📊'
+        },
+        {
+          step: 3,
           title: 'Altere sua foto',
           description: 'Clique no ícone da câmera sobre sua foto para fazer upload',
           icon: '📸'
         },
         {
-          step: 3,
-          title: 'Edite suas informações',
-          description: 'Clique em "Editar Perfil" para alterar nome e email',
+          step: 4,
+          title: 'Edite informações',
+          description: 'Clique em "Editar Perfil" para alterar nome (email não pode ser alterado)',
           icon: '✏️'
         },
         {
-          step: 4,
-          title: 'Configure notificações',
-          description: 'Ative/desative notificações por email conforme sua preferência',
-          icon: '🔔'
+          step: 5,
+          title: 'Alterar senha - Funcionalidade Futura',
+          description: 'Vá para "Alterar Senha" para atualizar sua senha de acesso',
+          icon: '🔒'
+        },
+        {
+          step: 6,
+          title: 'Excluir conta - Funcionalidade Futura',
+          description: 'Na página dedicada, confirme a exclusão permanente da conta',
+          icon: '🗑️'
         }
       ]
     },
@@ -105,21 +181,21 @@ const Guide = () => {
         },
         {
           step: 2,
-          title: 'Ajuste a dificuldade',
-          description: 'Considere o nível dos estudantes ao definir a dificuldade',
-          icon: '📊'
+          title: 'Use acessibilidade',
+          description: 'Aproveite os recursos de áudio e tamanho de fonte para diferentes necessidades',
+          icon: '♿'
         },
         {
           step: 3,
-          title: 'Use exercícios guiados',
-          description: 'Inclua exercícios com passo a passo para melhor compreensão',
-          icon: '🔄'
+          title: 'Compartilhe colaborativamente',
+          description: 'Trabalhe em equipe compartilhando apostilas com colegas professores',
+          icon: '👥'
         },
         {
           step: 4,
-          title: 'Revise e personalize',
-          description: 'Após gerar, você pode editar o conteúdo para ajustar ao seu estilo',
-          icon: '✅'
+          title: 'Combine recursos',
+          description: 'Use PDF para impressão e compartilhamento com alunos',
+          icon: '📤'
         }
       ]
     }
@@ -128,39 +204,67 @@ const Guide = () => {
   const faqs = [
     {
       question: 'Quanto tempo leva para gerar uma apostila?',
-      answer: 'O processo leva aproximadamente 3 minutos. Você pode acompanhar o progresso pela barra de carregamento.'
+      answer: 'O processo leva aproximadamente 3 minutos. Você pode acompanhar o status "Gerando..." na biblioteca.'
     },
     {
-      question: 'Posso editar uma apostila após gerá-la?',
-      answer: 'Sim! Após a geração, você pode visualizar o conteúdo completo e fazer ajustes manuais se necessário.'
+      question: 'Como edito uma apostila?',
+      answer: 'Acesse a apostila completa e edite diretamente no conteúdo. As alterações são salvas automaticamente.'
     },
     {
-      question: 'Quantas apostilas posso criar?',
-      answer: 'Não há limites! Você pode criar quantas apostilas precisar para as suas aulas.'
+      question: 'Posso compartilhar apostilas com outros usuários?',
+      answer: 'Sim! Use a função "Compartilhar" dentro da apostila ou pelo menu da biblioteca. A apostila aparecerá na biblioteca do usuário compartilhado.'
     },
     {
-      question: 'Preciso de conexão com internet para usar?',
-      answer: 'Sim, é necessária conexão com internet para gerar novas apostilas, mas você pode acessar as já criadas offline.'
+      question: 'Quais recursos de acessibilidade estão disponíveis?',
+      answer: 'Leitura por áudio, aumento/diminuição de fonte'
     },
     {
-      question: 'Posso baixar minhas apostilas?',
-      answer: 'Sim! Na visualização da apostila, você encontra a opção de exportar em PDF.'
+      question: 'Como faço para baixar em PDF?',
+      answer: 'No menu dropdown da apostila, clique em "Gerar PDF". O status mudará para "Baixando..." e o download começará automaticamente.'
+    },
+    {
+      question: 'Posso excluir apostilas compartilhadas comigo?',
+      answer: 'Não, você pode apenas visualizar apostilas compartilhadas. Apenas o proprietário pode excluí-las.'
+    },
+  
+    {
+      question: 'Posso editar uma apostila que foi compartilhada comigo?',
+      answer: 'Não, as apostilhas compartilhadas só podem ser editadas pelo proprietário da apostila.'
+    },
+    {
+      question: 'O sistema atualiza automaticamente?',
+      answer: 'Sim! Apostilas em geração são verificadas automaticamente para atualizar o status.'
     }
+  ];
+
+  const userLevels = [
+    { nivel: 'Iniciante', apostilas: '0', descricao: 'Começando na plataforma' },
+    { nivel: 'Explorador', apostilas: '1-5', descricao: 'Criando suas primeiras apostilas' },
+    { nivel: 'Criador', apostilas: '6-15', descricao: 'Produtivo e consistente' },
+    { nivel: 'Mestre', apostilas: '16-30', descricao: 'Experiente na criação' },
+    { nivel: 'Lenda', apostilas: '31+', descricao: 'Referência na plataforma' }
+  ];
+
+  const accessibilityFeatures = [
+    { feature: 'Leitura por Áudio', icon: '🎧', description: 'Texto convertido para voz' },
+    { feature: 'Tamanho da Fonte', icon: '🔠', description: 'A+/A-/Reset' },
+    { feature: 'Alto Contraste', icon: '🌓', description: 'Melhor visibilidade' },
+    { feature: 'Navegação por Teclado', icon: '⌨️', description: 'Acessibilidade total' }
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
 
         {/* Cabeçalho */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            📖 Guia do Usuário
+            📖 Guia Completo do Apostilab
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Aprenda a usar todas as funcionalidades do Apostilab para criar apostilas incríveis
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+            Domine todas as funcionalidades: criação, edição, acessibilidade e compartilhamento colaborativo
           </p>
         </div>
 
@@ -171,50 +275,40 @@ const Guide = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
               <h3 className="font-semibold text-gray-800 mb-4">Conteúdo do Guia</h3>
               <nav className="space-y-2">
-                <button
-                  onClick={() => setActiveSection('criar')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'criar'
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-100'
+                {Object.entries(sections).map(([key, section]) => (
+                  <button
+                    key={key}
+                    onClick={() => setActiveSection(key)}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition ${
+                      activeSection === key
+                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                        : 'text-gray-700 hover:bg-gray-100'
                     }`}
-                >
-                  📝 Criando Apostilas
-                </button>
-                <button
-                  onClick={() => setActiveSection('biblioteca')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'biblioteca'
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                >
-                  📚 Gerenciando Biblioteca
-                </button>
-                <button
-                  onClick={() => setActiveSection('perfil')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'perfil'
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                >
-                  👤 Personalizando Perfil
-                </button>
-                <button
-                  onClick={() => setActiveSection('dicas')}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition ${activeSection === 'dicas'
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                >
-                  💡 Dicas e Melhores Práticas
-                </button>
+                  >
+                    {section.title}
+                  </button>
+                ))}
               </nav>
+
+              {/* Sistema de Níveis */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h4 className="font-semibold text-gray-800 mb-3">🎯 Sistema de Níveis</h4>
+                <div className="space-y-2 text-sm">
+                  {userLevels.map((level, index) => (
+                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                      <span className="font-medium">{level.nivel}</span>
+                      <span className="text-gray-600 text-xs">{level.apostilas}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Quick Actions */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h4 className="font-semibold text-gray-800 mb-3">Ações Rápidas</h4>
                 <div className="space-y-2">
                   <Link
-                    to="/create-new"
+                    to="/"
                     className="block w-full text-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition font-medium"
                   >
                     🚀 Criar Apostila
@@ -241,7 +335,7 @@ const Guide = () => {
 
               <div className="space-y-6">
                 {sections[activeSection].steps.map((item) => (
-                  <div key={item.step} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg">
+                  <div key={item.step} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:border-blue-200 transition">
                     <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-lg">
                       {item.icon}
                     </div>
@@ -265,7 +359,7 @@ const Guide = () => {
 
               <div className="space-y-4">
                 {faqs.map((faq, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:border-blue-200 transition">
                     <h3 className="font-semibold text-gray-800 mb-2">{faq.question}</h3>
                     <p className="text-gray-600">{faq.answer}</p>
                   </div>
@@ -275,19 +369,27 @@ const Guide = () => {
 
             {/* Call to Action */}
             <div className="mt-8 text-center">
-              <div className="bg-blue-50 rounded-xl p-8 border border-blue-200">
-                <h3 className="text-xl font-semibold text-blue-800 mb-4">
-                  Pronto para começar?
+              <div className="bg-blue-500 rounded-xl p-8 text-white">
+                <h3 className="text-2xl font-bold mb-4">
+                  Pronto para colaborar?
                 </h3>
-                <p className="text-blue-700 mb-6">
-                  Crie sua primeira apostila agora mesmo e experimente o poder da IA na educação!
+                <p className="text-blue-100 mb-6 text-lg">
+                  Crie, edite, compartilhe e acesse com todos os recursos que desenvolvemos!
                 </p>
-                <Link
-                  to="/create-new"
-                  className="inline-block bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-500 transition shadow-md"
-                >
-                  🚀 Criar Minha Primeira Apostila
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link
+                    to="/"
+                    className="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-blue-50 transition shadow-md"
+                  >
+                    🚀 Criar Apostila
+                  </Link>
+                  <Link
+                    to="/library"
+                    className="inline-block bg-blue-800 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    📚 Explorar Biblioteca
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
