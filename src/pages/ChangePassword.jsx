@@ -165,7 +165,7 @@ const ChangePassword = () => {
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleChange}
-                placeholder="Digite a nova senha (mín. 6 caracteres)"
+                placeholder="Digite a nova senha (mín. 8 caracteres)"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 disabled={isLoading}
               />

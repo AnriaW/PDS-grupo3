@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI } from '../services/api';
+import { useAuth } from '../hooks/useAuth'; // Importe o hook
 import Header from '../components/Header';
 
-// TODO: sleep centralizado utilizando boas práticas
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -16,6 +15,7 @@ export default function Register() {
   const [_success, setSuccess] = useState(false);
   const [_isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { register } = useAuth(); // Use o hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,16 +25,16 @@ export default function Register() {
     await sleep(500);
 
     try {
-      const response = await authAPI.register({
+      // Use a função register do useAuth
+      await register({
         name: name,
         email: email,
         password: password
       });
 
-      localStorage.setItem('authToken', response.data.token);
       setSuccess(true);
-      await sleep(3000);
-      navigate('/home'); // Redireciona para a tela de home após o registro bem-sucedido
+      await sleep(1000);
+      navigate('/home'); // Agora vai funcionar!
 
     } catch (error) {
       console.error('Erro de registro: ', error)
@@ -50,6 +50,7 @@ export default function Register() {
       setIsLoading(false);
     }
   }
+
 
   return (
     <div className="bg-white text-black min-h-screen flex flex-col items-stretch w-screen overflow-x-hidden">
@@ -125,7 +126,7 @@ export default function Register() {
               />
             </svg>
             <span>
-              Parabéns! Sua conta foi criada com sucesso! Redirecionando para a página de login...
+              Parabéns! Sua conta foi criada com sucesso! Redirecionando para a página inicial...
             </span>
           </div>
         )}

@@ -51,7 +51,6 @@ export const useAuth = () => {
       return mockUser;
     }
 
-
     const responseLogin = await authAPI.login({ email, password });
     const token = responseLogin.data.access_token;
 
@@ -61,37 +60,58 @@ export const useAuth = () => {
 
     localStorage.setItem('authToken', token);
 
-    const responseProfile = await authAPI.getProfile(token);
-    if (responseProfile.data) { console.log(responseProfile.data); }
-
+    const responseProfile = await authAPI.getProfile();
+    setUser(responseProfile.data);
     localStorage.setItem('userData', JSON.stringify(responseProfile.data));
-    setUser(user);
 
-    return user;
+    return responseProfile.data;
   };
 
-  const register = async (email, password) => {
-    const response = await authAPI.register({ email, password });
-    const token = response.data.access_token;
+  const register = async (userData) => {
+    console.log('[useAuth] Iniciando registro com dados:', userData);
+    
+    try {
+      const response = await authAPI.register(userData);
+      console.log('[useAuth] Resposta do registro:', response);
+      
+      // VERSÃO FLEXÍVEL - tenta ambos os formatos de token
+      const token = response.data.token || response.data.access_token;
+      console.log('[useAuth] Token recebido:', token);
 
-    if (!token) {
-      throw new Error('Token não recebido no login');
+      if (!token) {
+        console.error('[useAuth] Nenhum token encontrado na resposta:', response.data);
+        throw new Error('Token não recebido no registro');
+      }
+
+      localStorage.setItem('authToken', token);
+      console.log('[useAuth] Token salvo no localStorage');
+
+      // Busca o perfil do usuário
+      console.log('[useAuth] Buscando perfil do usuário...');
+      const responseProfile = await authAPI.getProfile();
+      console.log('[useAuth] Perfil recebido:', responseProfile.data);
+      
+      setUser(responseProfile.data);
+      localStorage.setItem('userData', JSON.stringify(responseProfile.data));
+      console.log('[useAuth] Usuário autenticado com sucesso');
+
+      return responseProfile.data;
+      
+    } catch (error) {
+      console.error('[useAuth] Erro no registro:', error);
+      console.error('[useAuth] Detalhes do erro:', {
+        response: error.response,
+        message: error.message
+      });
+      throw error;
     }
-
-    const responseProfile = await authAPI.getProfile(token);
-    if (responseProfile.data) { console.log(responseProfile.data); }
-
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userData', JSON.stringify(responseProfile.data));
-    setUser(user);
-
-    return user;
   };
 
   const logout = () => {
     try {
       localStorage.removeItem('authToken');
       localStorage.removeItem('userData');
+      setUser(null);
     } catch (error) {
       console.error('Erro ao remover dados de autenticação:', error);
     }
