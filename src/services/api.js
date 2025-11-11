@@ -41,7 +41,7 @@ export const authAPI = {
     }),
 };
 
-export const userAPI = {  
+export const userAPI = {
   deleteAccount: () => api.delete('/auth/account'),
 };
 
@@ -75,6 +75,12 @@ export const apostilaAPI = {
       responseType: 'blob',
     }
   ),
+  deleteApostila: (id) => api.delete('/apostilas', {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
+    }, data: { id }
+  }),
 }
 
 export default api;

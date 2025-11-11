@@ -248,10 +248,12 @@ const Library = () => {
     }
 
     try {
-      // Adicionar a função para deletar no backend
-      // await apostilaAPI.deleteApostila(apostila.id);
+      const { _, error } = await supabase.from('files').delete().eq('id', apostila.id);
+      if (error) throw error;
 
-      // Por enquanto, vamos apenas remover do estado local
+      const { err } = await apostilaAPI.deleteApostila(apostila.id)
+      if (err) throw err;
+
       setApostilasDb(apostilasDb.filter(a => a.id !== apostila.id));
 
       console.log('Apostila excluída:', apostila.id);
@@ -458,8 +460,8 @@ const Library = () => {
                   disabled={disabled}
                   onClick={() => handleViewApostila(apostila)}
                 >
-                  {accessingApostila === apostila.id ? 'Acessando...' : 
-                   disabled ? 'Aguarde...' : 'Ver Apostila Completa'}
+                  {accessingApostila === apostila.id ? 'Acessando...' :
+                    disabled ? 'Aguarde...' : 'Ver Apostila Completa'}
                 </button>
               </div>
             );
